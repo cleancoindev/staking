@@ -107,7 +107,7 @@ contract StakeV1Functionality {
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
         (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
-        (uint256 minCap,, uint256 remainingToStake) = getStakeInfo(mode);
+        (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
 
@@ -160,7 +160,7 @@ contract StakeV1Functionality {
         }
     }
 
-    function getStakeInfo(uint256 mode) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
+    function getStakingInfo(uint256 mode) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
         (minCap, hardCap) = getStakingCap(mode);
         remainingToStake = hardCap;
         uint256 length = _stakeInfoLength[mode];
