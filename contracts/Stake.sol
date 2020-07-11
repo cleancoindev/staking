@@ -87,10 +87,18 @@ contract Stake {
         require(IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(msg.sender), "Unauthorized Action!");
         address walletAddress = proxy.getMVDWalletAddress();
         IERC20 token = IERC20(_tokenAddress);
-        token.transfer(walletAddress, token.balanceOf(address(this)));
+        uint256 balanceOf = token.balanceOf(address(this));
+        if(balanceOf > 0) {
+            token.transfer(walletAddress, balanceOf);
+        }
+        balanceOf = 0;
         for(uint256 i = 0; i < TOKENS.length; i++) {
             token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[i]));
-            token.transfer(walletAddress, token.balanceOf(address(this)));
+            balanceOf = token.balanceOf(address(this));
+            if(balanceOf > 0) {
+                token.transfer(walletAddress, balanceOf);
+            }
+            balanceOf = 0;
         }
     }
 
