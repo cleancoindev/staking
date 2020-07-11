@@ -111,7 +111,8 @@ contract StakeV1Functionality {
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
 
-        (uint256 reward, uint256 endBlock) = _add(mode, StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, REWARDS[mode], block.number + TIME_WINDOWS[mode]));
+        (uint256 reward, uint256 endBlock) = _add(mode, poolPosition, firstAmount, secondAmount, poolAmount);
+
         emit Staked(msg.sender, mode, poolPosition, firstAmount, secondAmount, poolAmount, reward, endBlock);
     }
 
@@ -128,7 +129,7 @@ contract StakeV1Functionality {
 
     function _createPoolToken(uint256 originalFirstAmount, uint256 originalSecondAmount, address secondToken) private returns(uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) {
         if(secondToken == WETH_ADDRESS) {
-            (firstAmount, secondAmount, poolAmount) = IUniswapV2Router(UNISWAP_V2_ROUTER).addLiquidityETH.value(originalSecondAmount)(
+            (firstAmount, secondAmount, poolAmount) = IUniswapV2Router(UNISWAP_V2_ROUTER).addLiquidityETH{value: originalSecondAmount}(
                 _tokenAddress,
                 originalFirstAmount,
                 originalFirstAmount,
@@ -169,6 +170,12 @@ contract StakeV1Functionality {
                 remainingToStake -= _stakeInfo[mode][i].firstAmount;
             }
         }
+    }
+
+    function _add(uint256 mode, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256, uint256) {
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, REWARDS[mode], block.number + TIME_WINDOWS[mode]);
+        _add(mode, stakeInfo);
+        return (stakeInfo.reward, stakeInfo.endBlock);
     }
 
     function _add(uint256 mode, StakeInfo memory element) private returns(uint256, uint256) {
