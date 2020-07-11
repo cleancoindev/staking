@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-contract StakeV1Functionality {
+contract Stake {
 
     address private constant UNISWAP_V2_FACTORY = 0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f;
 
