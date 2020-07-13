@@ -130,7 +130,7 @@ contract Stake {
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
         (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
-        
+
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
