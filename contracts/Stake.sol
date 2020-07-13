@@ -106,7 +106,8 @@ contract Stake {
         require(block.number >= _startBlock, "Staking is still not available");
         require(originalFirstAmount > 0, "First amount must be greater than 0");
         require(poolPosition < TOKENS.length, "Unknown Pool");
-        require(mode < TIME_WINDOWS.length, "Unknown Pool");
+        require(mode < TIME_WINDOWS.length, "Unknown Mode");
+        require(IStateHolder(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getStateHolderAddress()).getBool(string(abi.encodePacked("staking_enabled_", _toString(address(this))))), "This contract is not enabled to do staking");
 
         uint256 originalSecondAmount = TOKENS[poolPosition] == WETH_ADDRESS ? msg.value : value;
         require(originalSecondAmount > 0, "Second amount must be greater than 0");
@@ -218,8 +219,8 @@ contract Stake {
         IStateHolder stateHolder = IStateHolder(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getStateHolderAddress());
         string memory modeString = _toString(mode);
         return (
-            stateHolder.getUint256(string(abi.encodePacked("staking_v1_minCap", modeString))),
-            stateHolder.getUint256(string(abi.encodePacked("staking_v1_hardCap", modeString)))
+            stateHolder.getUint256(string(abi.encodePacked("staking_minCap_", modeString))),
+            stateHolder.getUint256(string(abi.encodePacked("staking_hardCap_", modeString)))
         );
     }
 
@@ -241,6 +242,20 @@ contract Stake {
         }
         return string(bstr);
     }
+
+    function _toString(address _addr) private pure returns(string memory) {
+        bytes32 value = bytes32(uint256(_addr));
+        bytes memory alphabet = "0123456789abcdef";
+
+        bytes memory str = new bytes(42);
+        str[0] = '0';
+        str[1] = 'x';
+        for (uint i = 0; i < 20; i++) {
+            str[2+i*2] = alphabet[uint(uint8(value[i + 12] >> 4))];
+            str[3+i*2] = alphabet[uint(uint8(value[i + 12] & 0x0f))];
+        }
+        return string(str);
+    }
 }
 
 interface IMVDProxy {
@@ -253,6 +268,7 @@ interface IMVDProxy {
 interface IStateHolder {
     function setUint256(string calldata name, uint256 value) external returns(uint256);
     function getUint256(string calldata name) external view returns(uint256);
+    function getBool(string calldata varName) external view returns (bool);
     function clear(string calldata varName) external returns(string memory oldDataType, bytes memory oldVal);
 }
 
