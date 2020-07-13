@@ -12,6 +12,8 @@ contract Stake {
 
     address[] private TOKENS;
 
+    mapping(uint256 => uint256) private _poolAmount;
+
     uint256[] private TIME_WINDOWS;
 
     uint256[] private REWARDS;
@@ -77,6 +79,10 @@ contract Stake {
         return _startBlock;
     }
 
+    function poolAmount(uint256 poolPosition) public view returns(uint256) {
+        return _poolAmount[poolPosition];
+    }
+
     function setDoubleProxy(address newDoubleProxy) public {
         require(IMVDFunctionalitiesManager(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(msg.sender), "Unauthorized Action!");
         _doubleProxy = newDoubleProxy;
@@ -116,6 +122,7 @@ contract Stake {
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
         (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
+        _poolAmount[poolPosition] = _poolAmount[poolPosition] + poolAmount;
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
@@ -211,6 +218,7 @@ contract Stake {
         token.transfer(stakeInfo.sender, stakeInfo.reward);
         token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[stakeInfo.poolPosition]));
         token.transfer(stakeInfo.sender, stakeInfo.poolAmount);
+        _poolAmount[stakeInfo.poolPosition] = _poolAmount[stakeInfo.poolPosition] - stakeInfo.poolAmount;
         emit Withdrawn(stakeInfo.sender, mode, stakeInfo.poolPosition, stakeInfo.firstAmount, stakeInfo.secondAmount, stakeInfo.poolAmount, stakeInfo.reward);
         _remove(mode, position);
     }
