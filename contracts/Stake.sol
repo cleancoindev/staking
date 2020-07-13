@@ -20,6 +20,8 @@ contract Stake {
 
     address private _doubleProxy;
 
+    uint256 _bookedBuidls;
+
     struct StakeInfo {
         address sender;
         uint256 poolPosition;
@@ -83,12 +85,16 @@ contract Stake {
         return _totalPoolAmount[poolPosition];
     }
 
+    function bookedBuidls() public view returns(uint256) {
+        return _bookedBuidls;
+    }
+
     function setDoubleProxy(address newDoubleProxy) public {
         require(IMVDFunctionalitiesManager(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(msg.sender), "Unauthorized Action!");
         _doubleProxy = newDoubleProxy;
     }
 
-    function flushToWallet() public {
+    function emergencyFlush() public {
         IMVDProxy proxy = IMVDProxy(IDoubleProxy(_doubleProxy).proxy());
         require(IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(msg.sender), "Unauthorized Action!");
         address walletAddress = proxy.getMVDWalletAddress();
@@ -96,6 +102,7 @@ contract Stake {
         uint256 balanceOf = token.balanceOf(address(this));
         if(balanceOf > 0) {
             token.transfer(walletAddress, balanceOf);
+            _bookedBuidls = 0;
         }
         balanceOf = 0;
         for(uint256 i = 0; i < TOKENS.length; i++) {
@@ -123,12 +130,15 @@ contract Stake {
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
         (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
-        _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
+        
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
 
         (uint256 reward, uint256 endBlock) = _add(mode, poolPosition, firstAmount, secondAmount, poolAmount);
+
+        _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
+        _bookedBuidls += reward;
 
         emit Staked(msg.sender, mode, poolPosition, firstAmount, secondAmount, poolAmount, reward, endBlock);
     }
@@ -220,6 +230,7 @@ contract Stake {
         token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[stakeInfo.poolPosition]));
         token.transfer(stakeInfo.sender, stakeInfo.poolAmount);
         _totalPoolAmount[stakeInfo.poolPosition] = _totalPoolAmount[stakeInfo.poolPosition] - stakeInfo.poolAmount;
+        _bookedBuidls -= stakeInfo.reward;
         emit Withdrawn(stakeInfo.sender, mode, stakeInfo.poolPosition, stakeInfo.firstAmount, stakeInfo.secondAmount, stakeInfo.poolAmount, stakeInfo.reward);
         _remove(mode, position);
     }
