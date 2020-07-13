@@ -12,7 +12,7 @@ contract Stake {
 
     address[] private TOKENS;
 
-    mapping(uint256 => uint256) private _poolAmount;
+    mapping(uint256 => uint256) private _totalPoolAmount;
 
     uint256[] private TIME_WINDOWS;
 
@@ -48,15 +48,15 @@ contract Stake {
             TOKENS.push(tokens[i]);
         }
 
-        TIME_WINDOWS.push(0);
-        TIME_WINDOWS.push(0);
-        TIME_WINDOWS.push(0);
-        TIME_WINDOWS.push(0);
+        TIME_WINDOWS.push(20);
+        TIME_WINDOWS.push(25);
+        TIME_WINDOWS.push(30);
+        TIME_WINDOWS.push(35);
 
-        REWARDS.push(0);
-        REWARDS.push(0);
-        REWARDS.push(0);
-        REWARDS.push(0);
+        REWARDS.push(5 * 10**18);
+        REWARDS.push(9 * 10**18);
+        REWARDS.push(20 * 10**18);
+        REWARDS.push(35 * 10**18);
     }
 
     function doubleProxy() public view returns(address) {
@@ -79,8 +79,8 @@ contract Stake {
         return _startBlock;
     }
 
-    function poolAmount(uint256 poolPosition) public view returns(uint256) {
-        return _poolAmount[poolPosition];
+    function totalPoolAmount(uint256 poolPosition) public view returns(uint256) {
+        return _totalPoolAmount[poolPosition];
     }
 
     function setDoubleProxy(address newDoubleProxy) public {
@@ -103,6 +103,7 @@ contract Stake {
             balanceOf = token.balanceOf(address(this));
             if(balanceOf > 0) {
                 token.transfer(walletAddress, balanceOf);
+                _totalPoolAmount[i] = 0;
             }
             balanceOf = 0;
         }
@@ -122,7 +123,7 @@ contract Stake {
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
         (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
-        _poolAmount[poolPosition] = _poolAmount[poolPosition] + poolAmount;
+        _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
@@ -218,7 +219,7 @@ contract Stake {
         token.transfer(stakeInfo.sender, stakeInfo.reward);
         token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[stakeInfo.poolPosition]));
         token.transfer(stakeInfo.sender, stakeInfo.poolAmount);
-        _poolAmount[stakeInfo.poolPosition] = _poolAmount[stakeInfo.poolPosition] - stakeInfo.poolAmount;
+        _totalPoolAmount[stakeInfo.poolPosition] = _totalPoolAmount[stakeInfo.poolPosition] - stakeInfo.poolAmount;
         emit Withdrawn(stakeInfo.sender, mode, stakeInfo.poolPosition, stakeInfo.firstAmount, stakeInfo.secondAmount, stakeInfo.poolAmount, stakeInfo.reward);
         _remove(mode, position);
     }
