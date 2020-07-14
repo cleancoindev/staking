@@ -5,7 +5,6 @@ var Info = React.createClass({
     render() {
         return (
             <section>
-                
             </section>
         );
     }

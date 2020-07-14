@@ -109,6 +109,11 @@ window.onEthereumUpdate = function onEthereumUpdate(millis) {
             }
             update && $.publish('ethereum/update');
             $.publish('ethereum/ping');
+            delete window.walletAddress;
+            try {
+                window.walletAddress = window.web3.currentProvider.selectedAddress;
+            } catch(e) {
+            }
             return ok(window.web3);
         }, !isNaN(millis) ? millis : 550);
     });

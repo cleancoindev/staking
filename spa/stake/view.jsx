@@ -3,39 +3,17 @@ var Stake = React.createClass({
         'spa/loader.jsx',
         'spa/bigLoader.jsx'
     ],
+    onTier(e) {
+        $($(e.currentTarget).parent()).children('a').each(function() {
+            $(this).removeClass('SelectedDutrationStake');
+        });
+        $(e.currentTarget).addClass("SelectedDutrationStake");
+    },
+    changeLogo(e) {
+        this.logo.src = "assets/img/" + e.currentTarget.value.split("_")[1] + "-logo.png";
+    },
     max() {
         this.props.balanceOf && (this.input.value = window.fromDecimals(this.props.balanceOf, 18));
-        this.onChange();
-    },
-    approve(e) {
-        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
-        if(e.currentTarget.className.indexOf("active") === -1) {
-            return;
-        }
-        this.controller.approve();
-    },
-    switch(e) {
-        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
-        if(e.currentTarget.className.indexOf("active") === -1) {
-            return;
-        }
-        this.controller.switchOperation(this.input.value);
-    },
-    onChange() {
-        if(!this.input || !this.switchFinal) {
-            return;
-        }
-        this.switchFinal.innerHTML = '0';
-        var value = this.input.value;
-        if(isNaN(parseInt(value))) {
-            return;
-        }
-        if(!this.props.currentSlot) {
-            return;
-        }
-        value = window.toDecimals(value, 18);
-        value = window.web3.utils.toBN(value).mul(window.web3.utils.toBN(this.props.currentSlot[1])).div(window.web3.utils.toBN(this.props.currentSlot[2]));
-        this.switchFinal.innerHTML = window.fromDecimals(value, 18);
     },
     render() {
         var _this = this;
@@ -44,29 +22,29 @@ var Stake = React.createClass({
                 <h3>Stake buidl/eth Liquidity</h3>
                 <section className="switchTools">
                     <a href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
-                    <input type="number" ref={ref => (this.input = ref) && (ref.value = window.fromDecimals(this.props.balanceOf, 18)) && this.onChange()} onChange={this.onChange}/>
+                    <input id="firstAmount" type="number"/>
                     <aside className="switchLink" target="_blank">buidl</aside>
-                    <img src="/assets/img/buidl-logo.png"></img>
+                    <img src="assets/img/buidl-logo.png"/>
                 </section>
                 <section className="switchTools">
                     <a href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
-                    <input type="number" ref={ref => (this.input = ref) && (ref.value = window.fromDecimals(this.props.balanceOf, 18)) && this.onChange()} onChange={this.onChange}/>
-                    <select className="switchLink" target="_blank">
-                        <option value="eth">eth</option>
-                        <option value="usdc">usdc</option>
+                    <input id="secondAmount" type="number" />
+                    <select ref={ref => this.pool = ref} className="switchLink" target="_blank" onChange={this.changeLogo}>
+                        <option value="0_eth" selected>eth</option>
+                        <option value="1_usdc">usdc</option>
                     </select>
-                    <img src="/assets/img/eth-logo.png"></img>
+                    <img ref={ref => this.logo = ref} src="assets/img/eth-logo.png"/>
                 </section>
                 <h3>Duration</h3>
                 <section className="switchTools">
-                    <a className="TimetoStake" href="javascript:;">1 Month</a>
-                    <a className="TimetoStake SelectedDutrationStake" href="javascript:;">3 Months</a>
-                    <a className="TimetoStake" href="javascript:;">6 Months</a>
-                    <a className="TimetoStake" href="javascript:;">1 Year</a>
+                    <a data-tier="0" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Month</a>
+                    <a data-tier="1" className="TimetoStake SelectedDutrationStake" href="javascript:;" onClick={this.onTier}>3 Months</a>
+                    <a data-tier="2" className="TimetoStake" href="javascript:;" onClick={this.onTier}>6 Months</a>
+                    <a data-tier="3" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Year</a>
                 </section>
                 <h3>Total Reward</h3>
                 <section className="switchTools">
-                    <span ref={ref => (this.switchFinal = ref) && this.onChange()} className="switchFinal">0</span>
+                    <span className="switchFinal">0</span>
                     <aside className="switchLink" >buidl</aside>
                     <img src="/assets/img/buidl-logo.png"></img>
                 </section>
