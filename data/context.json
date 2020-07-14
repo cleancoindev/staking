@@ -5,7 +5,7 @@
     },
     "etherscanURL": "https://etherscan.io/",
     "etherscanURLRopsten": "https://ropsten.etherscan.io/",
-    "stakeAddressRopsten" : "0x95f45704d8aC874c2E580Bd8Df79B3B3d7d60430",
+    "stakeAddressRopsten" : "0x1CadA985a180f5e054b547376EB98cfF5C4591EB",
     "stakeAddress" : "0xbd9f694deA17F7F6466d64655EbC888e0EE37ff7",
     "oldBuidlTokenAddressRopsten" : "0x4CB09DE252Eb206ce12a0e63843300A5CD21273B",
     "oldBuidlTokenAddress" : "0xD6F0Bb2A45110f819e908a915237D652Ac7c5AA8",

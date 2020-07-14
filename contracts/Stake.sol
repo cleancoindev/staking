@@ -8,19 +8,17 @@ contract Stake {
 
     address private WETH_ADDRESS = IUniswapV2Router(UNISWAP_V2_ROUTER).WETH();
 
-    address private _tokenAddress;
-
     address[] private TOKENS;
 
     mapping(uint256 => uint256) private _totalPoolAmount;
 
     uint256[] private TIME_WINDOWS;
 
-    uint256[] private REWARDS;
+    uint256[] private REWARD_MULTIPLIERS;
+
+    uint256[] private REWARD_DIVIDERS;
 
     address private _doubleProxy;
-
-    uint256 _bookedBuidls;
 
     struct StakeInfo {
         address sender;
@@ -37,14 +35,14 @@ contract Stake {
     mapping(uint256 => mapping(uint256 => StakeInfo)) private _stakeInfo;
     mapping(uint256 => uint256) private _stakeInfoLength;
 
-    event Staked(address indexed sender, uint256 indexed mode, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock);
-    event Withdrawn(address indexed sender, uint256 indexed mode, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward);
+    event Staked(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock);
+    event Withdrawn(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward);
 
     constructor(uint256 startBlock, address doubleProxy, address[] memory tokens) public {
 
         _startBlock = startBlock;
 
-        _tokenAddress = IMVDProxy(IDoubleProxy(_doubleProxy = doubleProxy).proxy()).getToken();
+        _doubleProxy = doubleProxy;
 
         for(uint256 i = 0; i < tokens.length; i++) {
             TOKENS.push(tokens[i]);
@@ -55,10 +53,15 @@ contract Stake {
         TIME_WINDOWS.push(30);
         TIME_WINDOWS.push(35);
 
-        REWARDS.push(5 * 10**18);
-        REWARDS.push(9 * 10**18);
-        REWARDS.push(20 * 10**18);
-        REWARDS.push(35 * 10**18);
+        REWARD_MULTIPLIERS.push(20);
+        REWARD_MULTIPLIERS.push(25);
+        REWARD_MULTIPLIERS.push(30);
+        REWARD_MULTIPLIERS.push(35);
+
+        REWARD_DIVIDERS.push(20);
+        REWARD_DIVIDERS.push(25);
+        REWARD_DIVIDERS.push(30);
+        REWARD_DIVIDERS.push(35);
     }
 
     function doubleProxy() public view returns(address) {
@@ -69,12 +72,8 @@ contract Stake {
         return TOKENS;
     }
 
-    function timeWindows() public view returns(uint256[] memory) {
-        return TIME_WINDOWS;
-    }
-
-    function rewards() public view returns(uint256[] memory) {
-        return REWARDS;
+    function tierData() public view returns(uint256[] memory, uint256[] memory, uint256[] memory) {
+        return (TIME_WINDOWS, REWARD_MULTIPLIERS, REWARD_DIVIDERS);
     }
 
     function startBlock() public view returns(uint256) {
@@ -83,10 +82,6 @@ contract Stake {
 
     function totalPoolAmount(uint256 poolPosition) public view returns(uint256) {
         return _totalPoolAmount[poolPosition];
-    }
-
-    function bookedBuidls() public view returns(uint256) {
-        return _bookedBuidls;
     }
 
     function setDoubleProxy(address newDoubleProxy) public {
@@ -98,15 +93,15 @@ contract Stake {
         IMVDProxy proxy = IMVDProxy(IDoubleProxy(_doubleProxy).proxy());
         require(IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(msg.sender), "Unauthorized Action!");
         address walletAddress = proxy.getMVDWalletAddress();
-        IERC20 token = IERC20(_tokenAddress);
+        address tokenAddress = proxy.getToken();
+        IERC20 token = IERC20(tokenAddress);
         uint256 balanceOf = token.balanceOf(address(this));
         if(balanceOf > 0) {
             token.transfer(walletAddress, balanceOf);
-            _bookedBuidls = 0;
         }
         balanceOf = 0;
         for(uint256 i = 0; i < TOKENS.length; i++) {
-            token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[i]));
+            token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(tokenAddress, TOKENS[i]));
             balanceOf = token.balanceOf(address(this));
             if(balanceOf > 0) {
                 token.transfer(walletAddress, balanceOf);
@@ -116,31 +111,54 @@ contract Stake {
         }
     }
 
-    function stake(uint256 mode, uint256 poolPosition, uint256 originalFirstAmount, uint256 value) public payable {
+    function stake(uint256 tier, uint256 poolPosition, uint256 originalFirstAmount, uint256 value) public payable {
         require(block.number >= _startBlock, "Staking is still not available");
         require(originalFirstAmount > 0, "First amount must be greater than 0");
         require(poolPosition < TOKENS.length, "Unknown Pool");
-        require(mode < TIME_WINDOWS.length, "Unknown Mode");
-        require(IStateHolder(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getStateHolderAddress()).getBool(string(abi.encodePacked("staking_enabled_", _toString(address(this))))), "This contract is not enabled to do staking");
+        require(tier < TIME_WINDOWS.length, "Unknown tier");
 
         uint256 originalSecondAmount = TOKENS[poolPosition] == WETH_ADDRESS ? msg.value : value;
         require(originalSecondAmount > 0, "Second amount must be greater than 0");
 
-        _transferTokensAndCheckAllowance(_tokenAddress, originalFirstAmount);
+        IMVDProxy proxy = IMVDProxy(IDoubleProxy(_doubleProxy).proxy());
+        address tokenAddress = proxy.getToken();
+
+        _transferTokensAndCheckAllowance(tokenAddress, originalFirstAmount);
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
 
-        (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, TOKENS[poolPosition]);
+        (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, tokenAddress, TOKENS[poolPosition]);
 
-        (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(mode);
+        (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(tier);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
-        require(firstAmount >= remainingToStake, "Amount to stake is less than the current remaining one");
+        require(firstAmount < remainingToStake, "Amount to stake must be less than the current remaining one");
 
-        (uint256 reward, uint256 endBlock) = _add(mode, poolPosition, firstAmount, secondAmount, poolAmount);
+        (uint256 reward, uint256 endBlock) = _add(tier, poolPosition, firstAmount, secondAmount, poolAmount);
 
         _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
-        _bookedBuidls += reward;
 
-        emit Staked(msg.sender, mode, poolPosition, firstAmount, secondAmount, poolAmount, reward, endBlock);
+        proxy.submit("transfer", abi.encode(address(0), 0, reward, address(this)));
+
+        emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, endBlock);
+    }
+
+    function getStakingInfo(uint256 tier) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
+        (minCap, hardCap) = getStakingCap(tier);
+        remainingToStake = hardCap;
+        uint256 length = _stakeInfoLength[tier];
+        for(uint256 i = 0; i < length; i++) {
+            if(_stakeInfo[tier][i].endBlock < block.number) {
+                remainingToStake -= _stakeInfo[tier][i].firstAmount;
+            }
+        }
+    }
+
+    function getStakingCap(uint256 tier) public view returns(uint256, uint256) {
+        IStateHolder stateHolder = IStateHolder(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getStateHolderAddress());
+        string memory tierString = _toString(tier);
+        return (
+            stateHolder.getUint256(string(abi.encodePacked("staking_minCap_", tierString))),
+            stateHolder.getUint256(string(abi.encodePacked("staking_hardCap_", tierString)))
+        );
     }
 
     function _transferTokensAndCheckAllowance(address tokenAddress, uint256 value) private {
@@ -154,10 +172,10 @@ contract Stake {
         }
     }
 
-    function _createPoolToken(uint256 originalFirstAmount, uint256 originalSecondAmount, address secondToken) private returns(uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) {
+    function _createPoolToken(uint256 originalFirstAmount, uint256 originalSecondAmount, address firstToken, address secondToken) private returns(uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) {
         if(secondToken == WETH_ADDRESS) {
             (firstAmount, secondAmount, poolAmount) = IUniswapV2Router(UNISWAP_V2_ROUTER).addLiquidityETH{value: originalSecondAmount}(
-                _tokenAddress,
+                firstToken,
                 originalFirstAmount,
                 originalFirstAmount,
                 originalSecondAmount,
@@ -166,7 +184,7 @@ contract Stake {
             );
         } else {
             (firstAmount, secondAmount, poolAmount) = IUniswapV2Router(UNISWAP_V2_ROUTER).addLiquidity(
-                _tokenAddress,
+                firstToken,
                 secondToken,
                 originalFirstAmount,
                 originalSecondAmount,
@@ -177,7 +195,7 @@ contract Stake {
             );
         }
         if(firstAmount < originalSecondAmount) {
-            IERC20(_tokenAddress).transfer(msg.sender, originalSecondAmount - secondAmount);
+            IERC20(firstToken).transfer(msg.sender, originalSecondAmount - secondAmount);
         }
         if(secondAmount < originalSecondAmount) {
             if(secondToken == WETH_ADDRESS) {
@@ -188,60 +206,64 @@ contract Stake {
         }
     }
 
-    function getStakingInfo(uint256 mode) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
-        (minCap, hardCap) = getStakingCap(mode);
-        remainingToStake = hardCap;
-        uint256 length = _stakeInfoLength[mode];
-        for(uint256 i = 0; i < length; i++) {
-            if(_stakeInfo[mode][i].endBlock < block.number) {
-                remainingToStake -= _stakeInfo[mode][i].firstAmount;
-            }
-        }
-    }
-
-    function _add(uint256 mode, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256, uint256) {
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, REWARDS[mode], block.number + TIME_WINDOWS[mode]);
-        _add(mode, stakeInfo);
+    function _add(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256, uint256) {
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, firstAmount * REWARD_MULTIPLIERS[tier] / REWARD_DIVIDERS[tier], block.number + TIME_WINDOWS[tier]);
+        _add(tier, stakeInfo);
         return (stakeInfo.reward, stakeInfo.endBlock);
     }
 
-    function _add(uint256 mode, StakeInfo memory element) private returns(uint256, uint256) {
-        _stakeInfo[mode][_stakeInfoLength[mode]] = element;
-        _stakeInfoLength[mode] = _stakeInfoLength[mode] + 1;
+    function _add(uint256 tier, StakeInfo memory element) private returns(uint256, uint256) {
+        _stakeInfo[tier][_stakeInfoLength[tier]] = element;
+        _stakeInfoLength[tier] = _stakeInfoLength[tier] + 1;
         return (element.reward, element.endBlock);
     }
 
-    function _remove(uint256 mode, uint256 i) private {
-        if(_stakeInfoLength[mode] <= i) {
+    function _remove(uint256 tier, uint256 i) private {
+        if(_stakeInfoLength[tier] <= i) {
             return;
         }
-        _stakeInfoLength[mode] = _stakeInfoLength[mode] - 1;
-        if(_stakeInfoLength[mode] > i) {
-            _stakeInfo[mode][i] = _stakeInfo[mode][_stakeInfoLength[mode]];
+        _stakeInfoLength[tier] = _stakeInfoLength[tier] - 1;
+        if(_stakeInfoLength[tier] > i) {
+            _stakeInfo[tier][i] = _stakeInfo[tier][_stakeInfoLength[tier]];
         }
-        delete _stakeInfo[mode][_stakeInfoLength[mode]];
+        delete _stakeInfo[tier][_stakeInfoLength[tier]];
     }
 
-    function withdraw(uint256 mode, uint256 position) public {
-        StakeInfo memory stakeInfo = _stakeInfo[mode][position];
-        require(block.number >= stakeInfo.endBlock, "Cannot actually withdraw this position");
-        IERC20 token = IERC20(_tokenAddress);
-        token.transfer(stakeInfo.sender, stakeInfo.reward);
-        token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(_tokenAddress, TOKENS[stakeInfo.poolPosition]));
-        token.transfer(stakeInfo.sender, stakeInfo.poolAmount);
-        _totalPoolAmount[stakeInfo.poolPosition] = _totalPoolAmount[stakeInfo.poolPosition] - stakeInfo.poolAmount;
-        _bookedBuidls -= stakeInfo.reward;
-        emit Withdrawn(stakeInfo.sender, mode, stakeInfo.poolPosition, stakeInfo.firstAmount, stakeInfo.secondAmount, stakeInfo.poolAmount, stakeInfo.reward);
-        _remove(mode, position);
+    function length(uint256 tier) public view returns(uint256){
+        return _stakeInfoLength[tier];
     }
 
-    function getStakingCap(uint256 mode) public view returns(uint256, uint256) {
-        IStateHolder stateHolder = IStateHolder(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getStateHolderAddress());
-        string memory modeString = _toString(mode);
-        return (
-            stateHolder.getUint256(string(abi.encodePacked("staking_minCap_", modeString))),
-            stateHolder.getUint256(string(abi.encodePacked("staking_hardCap_", modeString)))
+    function stakeInfo(uint256 tier, uint256 position) public view returns(
+        address sender,
+        uint256 poolPosition,
+        uint256 firstAmount,
+        uint256 secondAmount,
+        uint256 poolAmount,
+        uint256 reward,
+        uint256 endBlock
+    ) {
+        StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
+        return(
+            tierStakeInfo.sender,
+            tierStakeInfo.poolPosition,
+            tierStakeInfo.firstAmount,
+            tierStakeInfo.secondAmount,
+            tierStakeInfo.poolAmount,
+            tierStakeInfo.reward,
+            tierStakeInfo.endBlock
         );
+    }
+
+    function withdraw(uint256 tier, uint256 position) public {
+        StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
+        require(block.number >= tierStakeInfo.endBlock, "Cannot actually withdraw this position");
+        IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
+        token.transfer(tierStakeInfo.sender, tierStakeInfo.reward);
+        token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(address(token), TOKENS[tierStakeInfo.poolPosition]));
+        token.transfer(tierStakeInfo.sender, tierStakeInfo.poolAmount);
+        _totalPoolAmount[tierStakeInfo.poolPosition] = _totalPoolAmount[tierStakeInfo.poolPosition] - tierStakeInfo.poolAmount;
+        emit Withdrawn(tierStakeInfo.sender, tier, tierStakeInfo.poolPosition, tierStakeInfo.firstAmount, tierStakeInfo.secondAmount, tierStakeInfo.poolAmount, tierStakeInfo.reward);
+        _remove(tier, position);
     }
 
     function _toString(uint _i) private pure returns(string memory) {
@@ -283,6 +305,7 @@ interface IMVDProxy {
     function getStateHolderAddress() external view returns(address);
     function getMVDWalletAddress() external view returns(address);
     function getMVDFunctionalitiesManagerAddress() external view returns(address);
+    function submit(string calldata codeName, bytes calldata data) external payable returns(bytes memory returnData);
 }
 
 interface IStateHolder {
