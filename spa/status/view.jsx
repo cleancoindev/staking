@@ -15,13 +15,13 @@ var Status = React.createClass({
                     </section>
                     <section className="statusPosition">
                         <h4>for <b>1 Year</b></h4>
-                        <h5>333.2352235 buidl</h5>
+                        <h5><img src="/assets/img/buidl-logo.png"></img> <b>+ 3,330.9</b></h5>
                         <h6>Fixed Reward</h6>
                     </section>
                     <section className="statusPosition">
                         <h5><a target="_Bloank" href="https://etherscan.io/block/countdown/10462235">10462235</a></h5>
                         <h6>Lock End Block</h6>
-                        <a className="statusRedeem">Redeem</a>
+                        <a className="NoRedeem">Redeem</a>
                     </section>
                 </section>
             </section>

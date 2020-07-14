@@ -54,12 +54,15 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .statusBox h2 {font-size: 35px; display: inline-block; width: 100%; text-align: center; margin: 50px auto;}
 .statusYou {width: 100%; padding: 20px 0; display: inline-block; text-align: left;}
 .statusYou > a {display: inline-block; margin: 5px 5px; vertical-align: middle; font-size: 20px; color: #f1f1f1; text-decoration: underline;}
-.statusPosition {width: 181px; margin: 0 9px; display: inline-block;}
+.statusPosition {width: 181px; margin: 0 9px; display: inline-block; text-align: center;}
 .statusPosition h3 {font-size: 25px;}
 .statusPosition h4 {font-size: 20px; font-weight: normal; margin-bottom: 10px;}
 .statusPosition h5 {font-size: 18px;}
+.statusPosition h5 b {color: #09b439; font-size: 16px;}
+.statusPosition h5 img {display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;}
 .statusPosition h6 {font-size: 15px; font-weight: normal;}
-.statusPosition .statusRedeem {font-size: 14px; font-weight: bold; padding: 5px 8px; margin-top: 10px ; background-color: #8f00ff; display: inline-block;}
+.statusPosition .NoRedeem {font-size: 14px; font-weight: bold; padding: 5px 8px; margin-top: 10px ; background-color: #000000; display: inline-block;border-radius: 8px;}
+.statusPosition .ActiveRedeem {font-size: 14px; font-weight: bold; padding: 5px 8px; margin-top: 10px ; background-color: #09b439; display: inline-block;border-radius: 8px;}
 .statusBox ul {width: 100%; display: inline-block;}
 .statusBox ul li {width: 100%; display: inline-block; margin: 20px auto;}
 .statusBox ul li h1 {font-size: 25px; text-align: center; width: 100px; display: inline-block;}
