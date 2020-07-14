@@ -48,20 +48,20 @@ contract Stake {
             TOKENS.push(tokens[i]);
         }
 
-        TIME_WINDOWS.push(20);
         TIME_WINDOWS.push(25);
-        TIME_WINDOWS.push(30);
-        TIME_WINDOWS.push(35);
+        TIME_WINDOWS.push(25);
+        TIME_WINDOWS.push(25);
+        TIME_WINDOWS.push(25);
 
-        REWARD_MULTIPLIERS.push(20);
-        REWARD_MULTIPLIERS.push(25);
-        REWARD_MULTIPLIERS.push(30);
-        REWARD_MULTIPLIERS.push(35);
+        REWARD_MULTIPLIERS.push(1);
+        REWARD_MULTIPLIERS.push(5);
+        REWARD_MULTIPLIERS.push(2);
+        REWARD_MULTIPLIERS.push(5);
 
-        REWARD_DIVIDERS.push(20);
-        REWARD_DIVIDERS.push(25);
-        REWARD_DIVIDERS.push(30);
-        REWARD_DIVIDERS.push(35);
+        REWARD_DIVIDERS.push(100);
+        REWARD_DIVIDERS.push(100);
+        REWARD_DIVIDERS.push(10);
+        REWARD_DIVIDERS.push(10);
     }
 
     function doubleProxy() public view returns(address) {

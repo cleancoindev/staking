@@ -64,8 +64,7 @@ var Index = React.createClass({
                         <a href="javascript:;" className="StakeOpener" onClick={this.onClick}>Status</a>
                     </ul>
                 </section>
-                    {!props.slots && [<br/>, <Loader/>]}
-                    {props.slots && React.createElement(window[this.state.element], props)}
+                    {React.createElement(window[this.state.element], props)}
             </section>
         );
     }

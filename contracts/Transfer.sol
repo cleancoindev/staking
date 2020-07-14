@@ -3,15 +3,9 @@ pragma solidity ^0.6.0;
 contract TransferFunctionality {
 
     function onStart(address,address) public {
-        IStateHolder stateHolder = IStateHolder(IMVDProxy(msg.sender).getStateHolderAddress());
-        address tokenSwitchAddress = 0x1CadA985a180f5e054b547376EB98cfF5C4591EB;
-        stateHolder.setBool(_toStateHolderKey("authorizedToTransfer", _toString(tokenSwitchAddress)), true);
     }
 
     function onStop(address) public {
-        IStateHolder stateHolder = IStateHolder(IMVDProxy(msg.sender).getStateHolderAddress());
-        address tokenSwitchAddress = 0x1CadA985a180f5e054b547376EB98cfF5C4591EB;
-        stateHolder.clear(_toStateHolderKey("authorizedToTransfer", _toString(tokenSwitchAddress)));
     }
 
     function transfer(address sender, uint256, uint256 value, address receiver) public {
@@ -62,8 +56,6 @@ interface IMVDFunctionalitiesManager {
 }
 
 interface IStateHolder {
-    function clear(string calldata varName) external returns(string memory oldDataType, bytes memory oldVal);
-    function setBool(string calldata varName, bool val) external returns(bool);
     function getBool(string calldata varName) external view returns (bool);
 }
 
