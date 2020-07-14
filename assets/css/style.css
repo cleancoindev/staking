@@ -7,45 +7,12 @@ p, h1, h2, h3, h4, h5, h6, a, label, aside {color: #f1f1f1;}
 figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margin-inline-end: 0px;}
 .loader {width: 200px; display: inline-block;}
 
-@keyframes ldio-2w6250r221a {
-  0% { transform: rotate(0deg) }
-  100% { transform: rotate(360deg) }
-}
-.ldio-2w6250r221a > div > div {
-  position: absolute;
-  border-radius: 50%;
-}
-.ldio-2w6250r221a > div > div:nth-child(1) {
-  top: 4px;
-  left: 4px;
-  width: 92px;
-  height: 92px;
-  background: #65106e;
-}
-.ldio-2w6250r221a > div > div:nth-child(2) {
-  top: 4px;
-  left: 42.64px;
-  width: 14.72px;
-  height: 14.72px;
-  background: #ffffff;
-  animation: ldio-2w6250r221a 0.5464480874316939s linear infinite;
-  transform-origin: 7.36px 46px;
-}
-.loadingio-spinner-disk-bluuznaj8 {
-  width: 64px;
-  height: 64px;
-  display: inline-block;
-  overflow: hidden;
-  background: none;
-}
-.ldio-2w6250r221a {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform: translateZ(0) scale(0.64);
-  backface-visibility: hidden;
-  transform-origin: 0 0; /* see note above */
-}
+@keyframes ldio-2w6250r221a {0% { transform: rotate(0deg) }100% { transform: rotate(360deg) }}
+.ldio-2w6250r221a > div > div {position: absolute;border-radius: 50%;}
+.ldio-2w6250r221a > div > div:nth-child(1) {top: 4px;left: 4px;width: 92px;height: 92px;background: #65106e;}
+.ldio-2w6250r221a > div > div:nth-child(2) {top: 4px;left: 42.64px;width: 14.72px;height: 14.72px;background: #ffffff;animation: ldio-2w6250r221a 0.5464480874316939s linear infinite;transform-origin: 7.36px 46px;}
+.loadingio-spinner-disk-bluuznaj8 {width: 64px;height: 64px;display: inline-block;overflow: hidden;background: none;}
+.ldio-2w6250r221a {width: 100%;height: 100%;position: relative;transform: translateZ(0) scale(0.64);backface-visibility: hidden;transform-origin: 0 0;}
 .ldio-2w6250r221a div { box-sizing: content-box; }
 .OnePage {width: 100%; display: inline-block; overflow-x: hidden; text-align: center;}
 .Head {width: 100%; display: inline-block; height: auto; background-color: #1b1025; padding: 25px 0; text-align: center;}
@@ -85,12 +52,14 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .ExpPar {width: 90%; padding: 20px 0;}
 .statusBox {width: 290px; display: block; margin: 0px auto 10px auto;}
 .statusBox h2 {font-size: 35px; display: inline-block; width: 100%; text-align: center; margin: 50px auto;}
-.statusTitle {width: 100%; padding: 20px 0; display: inline-block;}
-.statusFlip {display: inline-block; width: 290px;}
-.statusFlip img {width: 25px; height: 25px; display: inline-block; margin: auto 5px; vertical-align: middle;}
-.statusFlip a {display: inline-block; margin: 5px 5px; vertical-align: middle; font-size: 20px; color: #f1f1f1; text-decoration: underline;}
-.statusFlip h3 {font-size: 35px;}
-.statusFlip h6 {font-size: 18px; font-weight: normal;}
+.statusYou {width: 100%; padding: 20px 0; display: inline-block; text-align: left;}
+.statusYou > a {display: inline-block; margin: 5px 5px; vertical-align: middle; font-size: 20px; color: #f1f1f1; text-decoration: underline;}
+.statusPosition {width: 181px; margin: 0 9px; display: inline-block;}
+.statusPosition h3 {font-size: 25px;}
+.statusPosition h4 {font-size: 20px; font-weight: normal; margin-bottom: 10px;}
+.statusPosition h5 {font-size: 18px;}
+.statusPosition h6 {font-size: 15px; font-weight: normal;}
+.statusPosition .statusRedeem {font-size: 14px; font-weight: bold; padding: 5px 8px; margin-top: 10px ; background-color: #8f00ff; display: inline-block;}
 .statusBox ul {width: 100%; display: inline-block;}
 .statusBox ul li {width: 100%; display: inline-block; margin: 20px auto;}
 .statusBox ul li h1 {font-size: 25px; text-align: center; width: 100px; display: inline-block;}

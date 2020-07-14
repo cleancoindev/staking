@@ -6,19 +6,22 @@ var Status = React.createClass({
     render() {
         return (<section>
             <section className="statusBox">
-                <h2>Flippening Watch</h2>
-                <section className="statusTitle">
-                    <section className="statusFlip">
-                        <img src="/assets/img/buidl-logo.png"></img>
-                        <a>$BUIDL V1</a>
+                <h2>Your Positions</h2>
+                <section className="statusYou">
+                    <section className="statusPosition">
                         <h3>{window.fromDecimals(this.props.oldVotingTokenSupply, 18)}</h3>
-                        <h6>Circulating Supply</h6>
+                        <h6>&#129412; <a href="">Uniswap-V2</a></h6>
+                        <h6><b>USDC-buidl</b></h6>
                     </section>
-                    <section className="statusFlip">
-                        <img src="/assets/img/buidlv2-logo.png"></img>
-                        <a>$buidl V2</a>
-                        <h3>{window.fromDecimals(this.props.newVotingTokenSupply, 18)}</h3>
-                        <h6>Circulating Supply</h6>
+                    <section className="statusPosition">
+                        <h4>for <b>1 Year</b></h4>
+                        <h5>333.2352235 buidl</h5>
+                        <h6>Fixed Reward</h6>
+                    </section>
+                    <section className="statusPosition">
+                        <h5><a target="_Bloank" href="https://etherscan.io/block/countdown/10462235">10462235</a></h5>
+                        <h6>Lock End Block</h6>
+                        <a className="statusRedeem">Redeem</a>
                     </section>
                 </section>
             </section>
