@@ -10,7 +10,7 @@ var Status = React.createClass({
                 <section className="statusYou">
                     <section className="statusPosition">
                         <h3>{window.fromDecimals(this.props.oldVotingTokenSupply, 18)}</h3>
-                        <h6>&#129412; <a href="">Uniswap-V2</a></h6>
+                        <h6 className="statusUni">&#129412; <a href="">Uniswap-V2</a></h6>
                         <h6><b>USDC-buidl</b></h6>
                     </section>
                     <section className="statusPosition">
@@ -26,7 +26,7 @@ var Status = React.createClass({
                 </section>
             </section>
             <section className="statusBox">
-                <h2>Switch Status:</h2>
+                <h2>Liquidity Stake Status:</h2>
                 {this.props && this.props.currentBlock < this.props.startBlock && [<h3>Start Block: <a href={window.getNetworkElement("etherscanURL") + "block/" + this.props.startBlock} target="_blank">{this.props.startBlock}</a></h3>,<br/>]}
                 <ul>
                     {this.props.slots && this.props.slots.map((it, i) => <li key={i}>
