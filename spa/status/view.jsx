@@ -30,28 +30,28 @@ var Status = React.createClass({
                 <section className="statusAll">
                     <section className="statusTier">
                         <h3>1 Month</h3>
-                        <h4 className="TierStaked"><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h4 className="TierStaked">3,500.00 <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierStaked">Staked</h6>
                         <h4 className="TierFree"><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierFree">Available</h6>
                     </section>
                     <section className="statusTier">
                         <h3>3 Months</h3>
-                        <h4 className="TierStaked"><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h4 className="TierStaked">3,500.00 <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierStaked">Staked</h6>
                         <h4 className="TierFree"><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierFree">Available</h6>
                     </section>
                     <section className="statusTier">
                         <h3>6 Months</h3>
-                        <h4 className="TierStaked"><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h4 className="TierStaked">3,500.00 <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierStaked">Staked</h6>
                         <h4 className="TierFree"><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierFree">Available</h6>
                     </section>
                     <section className="statusTier">
                         <h3>1 Year</h3>
-                        <h4 className="TierStaked"><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h4 className="TierStaked">3,500.00 <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierStaked">Staked</h6>
                         <h4 className="TierFree"><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierFree">Available</h6>
@@ -60,11 +60,11 @@ var Status = React.createClass({
                 <section className="statusBox">
                     <h2>Inflation Status:</h2>
                     <section className="statusAll">
-                        <section className="statusTier">
+                        <section className="statusTier statusTierRw">
                             <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                             <h6>&#127873; Total Rewards &#127873;</h6>
                         </section>
-                        <section className="statusTier">
+                        <section className="statusTier statusTierBr">
                             <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                             <h6>&#128293; Total Burned &#128293;</h6>
                         </section>

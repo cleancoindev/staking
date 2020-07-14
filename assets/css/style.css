@@ -50,7 +50,7 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .ExpPar {width: 90%; padding: 20px 0;}
 .statusBox {width: 290px; display: block; margin: 0px auto 10px auto;}
 .statusBox h2 {font-size: 35px; display: inline-block; width: 100%; text-align: center; margin: 50px auto;}
-.statusYou {width: 100%; padding: 20px 0; display: inline-block; text-align: left;}
+.statusYou {width: 100%; padding: 20px 0; display: inline-block; text-align: left; border-radius: 30px; background-color: #2c2b2d;}
 .statusYou > a {display: inline-block; margin: 5px 5px; vertical-align: middle; font-size: 20px; color: #f1f1f1; text-decoration: underline;}
 .statusPosition {width: 181px; margin: 0 9px; display: inline-block; text-align: center;}
 .statusPosition h3 {font-size: 25px; color: #ff01d5;}
@@ -69,14 +69,15 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .TimetoStake {text-decoration: none; background-color: #252525; padding: 5px 8px; font-size: 14px; font-weight: bold; margin: auto 5px; border-radius: 8px;}
 .TimetoStake:hover, .SelectedDutrationStake {background-color: #398bf0;}
 .statusAll {width: 100%; display: inline-block; text-align: center;}
-.statusAll {width: 250px; display: inline-block; margin: 15px; text-align: center;}
-.statusAll h3 {font-size: 25px; color: #398bf0;}
-.statusAll h4 {width: 100%; display: inline-block; margin: 10px auto;}
-.statusAll h4 b {font-size: 18px;}
-.statusAll h4 img {width: 20px; height: 20px;display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;}
-.statusAll h6 {font-size: 16px;}
-.TierStaked {color: #f1f1f1;}
+.statusTier {width: 250px; display: inline-block; margin: 15px; padding: 15px 5px; text-align: center; background-color: #2c2b2d; border-radius: 30px;}
+.statusAll h3 {font-size: 35px; color: #398bf0;}
+.statusAll h4 {width: 100%; display: inline-block; margin: 10px auto 0px auto; font-size: 22px;}
+.statusAll h4 img {width: 20px; height: 20px;display: inline-block;width: 20px;height: 20px;vertical-align: unset;}
+.statusAll h6 {font-size: 14px; font-weight: normal;}
+.TierStaked {color: #f1f1f1; font-weight: normal !important;}
 .TierFree {color: #09b439;}
+.statusTierBr h4,.statusTierBr h6 {color: #f90e19;}
+.statusTierRw h4, .statusTierRw h6 {color: #f1f1f1;}
 
 
 @media only screen and (min-width: 640px) {
