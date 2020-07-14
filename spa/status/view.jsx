@@ -3,9 +3,6 @@ var Status = React.createClass({
         'spa/loader.jsx',
         'spa/bigLoader.jsx'
     ],
-    componentDidMount() {
-        this.controller.loadData();
-    },
     render() {
         return (<section>
             <section className="statusBox">
