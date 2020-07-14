@@ -27,14 +27,48 @@ var Status = React.createClass({
             </section>
             <section className="statusBox">
                 <h2>Liquidity Stake Status:</h2>
-                {this.props && this.props.currentBlock < this.props.startBlock && [<h3>Start Block: <a href={window.getNetworkElement("etherscanURL") + "block/" + this.props.startBlock} target="_blank">{this.props.startBlock}</a></h3>,<br/>]}
-                <ul>
-                    {this.props.slots && this.props.slots.map((it, i) => <li key={i}>
-                        <h1>x {window.numberToString(parseInt(it[1]) / parseInt(it[2]))}</h1>
-                        <h5>End Block: <a href={window.getNetworkElement("etherscanURL") + "block/" + it[0]} target="_blank">{it[0]}</a></h5>
-                        <h5>Status: {'\u00a0'} <a className={this.props.slots.indexOf(this.props.currentSlot) === i ? "Active" : this.props.currentBlock < this.props.startBlock || (this.props.currentSlot && this.props.slots.indexOf(this.props.currentSlot) < i) ? "Next" : "Ended"}>{this.props.slots.indexOf(this.props.currentSlot) === i ? "Active" : this.props.currentBlock < this.props.startBlock || (this.props.currentSlot && this.props.slots.indexOf(this.props.currentSlot) < i) ? "Next" : "Ended"}</a></h5>
-                    </li>)}
-                </ul>
+                <section className="statusAll">
+                    <section className="statusTier">
+                        <h3>1 Month</h3>
+                        <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Staked</h6>
+                        <h4><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Available</h6>
+                    </section>
+                    <section className="statusTier">
+                        <h3>3 Months</h3>
+                        <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Staked</h6>
+                        <h4><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Available</h6>
+                    </section>
+                    <section className="statusTier">
+                        <h3>6 Months</h3>
+                        <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Staked</h6>
+                        <h4><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Available</h6>
+                    </section>
+                    <section className="statusTier">
+                        <h3>1 Year</h3>
+                        <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Staked</h6>
+                        <h4><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
+                        <h6>Available</h6>
+                    </section>
+                </section>
+                <section className="statusBox">
+                    <h2>Inflation Status:</h2>
+                    <section className="statusBurnNew">
+                        <h3><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h3>
+                        <h4>Total Reward</h4>
+                    </section>
+                    <section className="statusBurnNew">
+                        <h3><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h3>
+                        <h4>Total Burned</h4>
+                    </section>
+                </section>
+
             </section>
         </section>);
     }
