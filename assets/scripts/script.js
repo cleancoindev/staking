@@ -104,7 +104,6 @@ window.onEthereumUpdate = function onEthereumUpdate(millis) {
                 if (network === undefined || network === null) {
                     return alert('This network is actually not supported!');
                 }
-                window.DFOHub(window.web3);
                 window.stake = window.newContract(window.context.StakeAbi, window.getNetworkElement("stakeAddress"));
                 update = true;
             }

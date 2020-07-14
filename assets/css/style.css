@@ -68,6 +68,16 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .DisclamerBanner a {font-size: 16px; padding: 10px 15px; color: #f1f1f1; background-color: #09b439; font-weight: bold; display: inline-block; text-decoration: none;}
 .TimetoStake {text-decoration: none; background-color: #252525; padding: 5px 8px; font-size: 14px; font-weight: bold; margin: auto 5px; border-radius: 8px;}
 .TimetoStake:hover, .SelectedDutrationStake {background-color: #398bf0;}
+.statusAll {width: 100%; display: inline-block; text-align: center;}
+.statusAll {width: 250px; display: inline-block; margin: 15px; text-align: center;}
+.statusAll h3 {font-size: 25px; color: #398bf0;}
+.statusAll h4 {width: 100%; display: inline-block; margin: 10px auto;}
+.statusAll h4 b {font-size: 18px;}
+.statusAll h4 img {width: 20px; height: 20px;display: inline-block;width: 20px;height: 20px;vertical-align: text-bottom;}
+.statusAll h6 {font-size: 16px;}
+.TierStaked {color: #f1f1f1;}
+.TierFree {color: #09b439;}
+
 
 @media only screen and (min-width: 640px) {
     .HBrand h6 {font-size: 25px; margin-left: 50px;}

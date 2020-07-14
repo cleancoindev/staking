@@ -36,9 +36,7 @@ var Index = React.createClass({
             }
         });
     },
-    componentDidMount() {
-        this.controller.loadData();
-    },
+
     render() {
         var props = {};
         this.state && Object.entries(this.state).forEach(data => props[data[0]] = data[1]);
@@ -56,7 +54,7 @@ var Index = React.createClass({
                     <section className="HActions">
                         <a href="https://dfohub.com" target="_Blank">#dfohub</a>
                         <a href="https://github.com/b-u-i-d-l/staking" target="_Blank">#github</a>
-                        <a href={window.getNetworkElement("etherscanURL") + "address/" + window.vasaPowerSwitch.options.address} target="_Blank">#etherscan</a>
+                        <a href="" target="_Blank">#etherscan</a>
                     </section>
                 </header>
                 <section className="PagerMenu">
