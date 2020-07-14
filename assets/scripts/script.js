@@ -105,8 +105,7 @@ window.onEthereumUpdate = function onEthereumUpdate(millis) {
                     return alert('This network is actually not supported!');
                 }
                 window.DFOHub(window.web3);
-                window.vasaPowerSwitch = window.newContract(window.context.VasaPowerSwitchAbi, window.getNetworkElement("vasaPowerSwitchAddress"));
-                window.oldToken = window.newContract(window.context.erc20Abi, window.getNetworkElement("oldBuidlTokenAddress"));
+                window.stake = window.newContract(window.context.StakeAbi, window.getNetworkElement("stakeAddress"));
                 update = true;
             }
             update && $.publish('ethereum/update');
