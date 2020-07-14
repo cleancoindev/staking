@@ -8,6 +8,8 @@ contract Stake {
 
     address private WETH_ADDRESS = IUniswapV2Router(UNISWAP_V2_ROUTER).WETH();
 
+    uint256 private constant REWARD_SPLIT_TRANCHES = 4;
+
     address[] private TOKENS;
 
     mapping(uint256 => uint256) private _totalPoolAmount;
@@ -28,6 +30,9 @@ contract Stake {
         uint256 poolAmount;
         uint256 reward;
         uint256 endBlock;
+        uint256 rewardBlockTime;
+        uint256 nextRewardBlock;
+        uint256 splittedReward;
     }
 
     uint256 private _startBlock;
@@ -35,8 +40,9 @@ contract Stake {
     mapping(uint256 => mapping(uint256 => StakeInfo)) private _stakeInfo;
     mapping(uint256 => uint256) private _stakeInfoLength;
 
-    event Staked(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock);
-    event Withdrawn(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward);
+    event Staked(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock, uint256 rewardBlockTime, uint256 nextRewardBlock, uint256 splittedReward);
+    event Withdrawn(address sender, address indexed receiver, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward);
+    event PartialWithdrawn(address sender, address indexed receiver, uint256 indexed tier, uint256 reward);
 
     constructor(uint256 startBlock, address doubleProxy, address[] memory tokens) public {
 
@@ -132,13 +138,11 @@ contract Stake {
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount < remainingToStake, "Amount to stake must be less than the current remaining one");
 
-        (uint256 reward, uint256 endBlock) = _add(tier, poolPosition, firstAmount, secondAmount, poolAmount);
-
         _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
 
-        proxy.submit("transfer", abi.encode(address(0), 0, reward, address(this)));
+        uint256 reward = _add(tier, poolPosition, firstAmount, secondAmount, poolAmount);
 
-        emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, endBlock);
+        proxy.submit("transfer", abi.encode(address(0), 0, reward, address(this)));
     }
 
     function getStakingInfo(uint256 tier) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
@@ -206,10 +210,13 @@ contract Stake {
         }
     }
 
-    function _add(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256, uint256) {
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, firstAmount * REWARD_MULTIPLIERS[tier] / REWARD_DIVIDERS[tier], block.number + TIME_WINDOWS[tier]);
+    function _add(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256) {
+        uint256 rewardBlockTime = TIME_WINDOWS[tier] / REWARD_SPLIT_TRANCHES;
+        uint256 reward = firstAmount * REWARD_MULTIPLIERS[tier] / REWARD_DIVIDERS[tier];
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, reward, block.number + TIME_WINDOWS[tier], rewardBlockTime, block.number + rewardBlockTime, reward / REWARD_SPLIT_TRANCHES);
         _add(tier, stakeInfo);
-        return (stakeInfo.reward, stakeInfo.endBlock);
+        emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, stakeInfo.endBlock, rewardBlockTime, stakeInfo.nextRewardBlock, stakeInfo.splittedReward);
+        return stakeInfo.reward;
     }
 
     function _add(uint256 tier, StakeInfo memory element) private returns(uint256, uint256) {
@@ -234,13 +241,15 @@ contract Stake {
     }
 
     function stakeInfo(uint256 tier, uint256 position) public view returns(
-        address sender,
-        uint256 poolPosition,
-        uint256 firstAmount,
-        uint256 secondAmount,
-        uint256 poolAmount,
-        uint256 reward,
-        uint256 endBlock
+        address,
+        uint256,
+        uint256,
+        uint256,
+        uint256,
+        uint256,
+        uint256,
+        uint256,
+        uint256
     ) {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
         return(
@@ -250,19 +259,34 @@ contract Stake {
             tierStakeInfo.secondAmount,
             tierStakeInfo.poolAmount,
             tierStakeInfo.reward,
-            tierStakeInfo.endBlock
+            tierStakeInfo.endBlock,
+            tierStakeInfo.nextRewardBlock,
+            tierStakeInfo.splittedReward
         );
+    }
+
+    function partialReward(uint256 tier, uint256 position) public {
+        StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
+        require(block.number >= tierStakeInfo.nextRewardBlock, "Cannot actually withdraw this position");
+        IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
+        token.transfer(tierStakeInfo.sender, tierStakeInfo.splittedReward);
+        tierStakeInfo.reward = tierStakeInfo.reward - tierStakeInfo.splittedReward;
+        tierStakeInfo.nextRewardBlock = block.number + tierStakeInfo.rewardBlockTime;
+        _stakeInfo[tier][position] = tierStakeInfo;
+        emit PartialWithdrawn(msg.sender, tierStakeInfo.sender, tier, tierStakeInfo.reward);
     }
 
     function withdraw(uint256 tier, uint256 position) public {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
         require(block.number >= tierStakeInfo.endBlock, "Cannot actually withdraw this position");
         IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
-        token.transfer(tierStakeInfo.sender, tierStakeInfo.reward);
+        if(tierStakeInfo.reward > 0) {
+            token.transfer(tierStakeInfo.sender, tierStakeInfo.reward);
+        }
         token = IERC20(IUniswapV2Factory(UNISWAP_V2_FACTORY).getPair(address(token), TOKENS[tierStakeInfo.poolPosition]));
         token.transfer(tierStakeInfo.sender, tierStakeInfo.poolAmount);
         _totalPoolAmount[tierStakeInfo.poolPosition] = _totalPoolAmount[tierStakeInfo.poolPosition] - tierStakeInfo.poolAmount;
-        emit Withdrawn(tierStakeInfo.sender, tier, tierStakeInfo.poolPosition, tierStakeInfo.firstAmount, tierStakeInfo.secondAmount, tierStakeInfo.poolAmount, tierStakeInfo.reward);
+        emit Withdrawn(msg.sender, tierStakeInfo.sender, tier, tierStakeInfo.poolPosition, tierStakeInfo.firstAmount, tierStakeInfo.secondAmount, tierStakeInfo.poolAmount, tierStakeInfo.reward);
         _remove(tier, position);
     }
 
