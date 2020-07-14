@@ -7,7 +7,8 @@ var Status = React.createClass({
         return (<section>
             <section className="statusBox">
                 <h2>Your Positions</h2>
-                <section className="statusYou">
+                {(!this.state || this.state.loadingPosition) && <Loader/>}
+                {(!this.state || !this.state.loadingPosition) && <section className="statusYou">
                     <section className="statusPosition">
                         <h3>{window.fromDecimals(this.props.oldVotingTokenSupply, 18)}</h3>
                         <h6 className="statusUni">&#129412; <a href="">Uniswap-V2</a></h6>
@@ -23,11 +24,12 @@ var Status = React.createClass({
                         <h6>Lock End Block</h6>
                         <a className="NoRedeem">Redeem</a>
                     </section>
-                </section>
+                </section>}
             </section>
             <section className="statusBox">
                 <h2>Liquidity Stake Status:</h2>
-                <section className="statusAll">
+                {(!this.state || this.state.loadingGeneral) && <Loader/>}
+                {(!this.state || !this.state.loadingGeneral) && <section className="statusAll">
                     <section className="statusTier">
                         <h3>1 Month</h3>
                         <h4 className="TierStaked">3,500.00 <img src="/assets/img/buidl-logo.png"></img></h4>
@@ -56,11 +58,12 @@ var Status = React.createClass({
                         <h4 className="TierFree"><b>27,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                         <h6 className="TierFree">Available</h6>
                     </section>
-                </section>
+                </section>}
                 <section className="statusBox">
                     <h2>Inflation Status:</h2>
-                    <section className="statusAll">
-                        <section className="statusTier statusTierRw">
+                    {(!this.state || this.state.loadingInflation) && <Loader/>}
+                    {(!this.state || !this.state.loadingInflation) && <section className="statusAll">
+                        <section className="statusTier">
                             <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                             <h6>&#127873; Total Rewards &#127873;</h6>
                         </section>
@@ -68,9 +71,8 @@ var Status = React.createClass({
                             <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
                             <h6>&#128293; Total Burned &#128293;</h6>
                         </section>
-                    </section>
+                    </section>}
                 </section>
-
             </section>
         </section>);
     }

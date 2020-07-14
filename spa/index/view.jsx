@@ -11,11 +11,6 @@ var Index = React.createClass({
             element: "Info"
         };
     },
-    getDefaultSubscriptions() {
-        return {
-            'ethereum/ping' : this.controller.loadData
-        };
-    },
     onClick(e) {
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         this.changeView(e.currentTarget.innerHTML);
@@ -36,7 +31,6 @@ var Index = React.createClass({
             }
         });
     },
-
     render() {
         var props = {};
         this.state && Object.entries(this.state).forEach(data => props[data[0]] = data[1]);
