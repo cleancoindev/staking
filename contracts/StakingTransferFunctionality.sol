@@ -11,7 +11,7 @@ contract StakingTransferFunctionality {
     function stakingTransfer(address sender, uint256, uint256 value, address receiver) public {
         IMVDProxy proxy = IMVDProxy(msg.sender);
 
-        require(IStateHolder(proxy.getStateHolderAddress()).getBool(_toStateHolderKey("authorizedToTransfer", _toString(sender))) || IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(sender), "Unauthorized action!");
+        require(IStateHolder(proxy.getStateHolderAddress()).getBool(_toStateHolderKey("authorizedToTransferForStaking", _toString(sender))) || IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(sender), "Unauthorized action!");
 
         proxy.transfer(receiver, value, proxy.getToken());
     }
