@@ -8,7 +8,7 @@ contract Stake {
 
     address private WETH_ADDRESS = IUniswapV2Router(UNISWAP_V2_ROUTER).WETH();
 
-    uint256 private constant REWARD_SPLIT_TRANCHES = 4;
+    uint256[] private REWARD_SPLIT_TRANCHES;
 
     address[] private TOKENS;
 
@@ -30,8 +30,7 @@ contract Stake {
         uint256 poolAmount;
         uint256 reward;
         uint256 endBlock;
-        uint256 rewardBlockTime;
-        uint256 nextRewardBlock;
+        uint256[] partialRewardBlockTimes;
         uint256 splittedReward;
     }
 
@@ -40,7 +39,7 @@ contract Stake {
     mapping(uint256 => mapping(uint256 => StakeInfo)) private _stakeInfo;
     mapping(uint256 => uint256) private _stakeInfoLength;
 
-    event Staked(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock, uint256 rewardBlockTime, uint256 nextRewardBlock, uint256 splittedReward);
+    event Staked(address indexed sender, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward, uint256 endBlock, uint256[] partialRewardBlockTimes, uint256 splittedReward);
     event Withdrawn(address sender, address indexed receiver, uint256 indexed tier, uint256 indexed poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, uint256 reward);
     event PartialWithdrawn(address sender, address indexed receiver, uint256 indexed tier, uint256 reward);
 
@@ -59,15 +58,20 @@ contract Stake {
         TIME_WINDOWS.push(25);
         TIME_WINDOWS.push(25);
 
-        REWARD_MULTIPLIERS.push(1);
         REWARD_MULTIPLIERS.push(5);
         REWARD_MULTIPLIERS.push(2);
+        REWARD_MULTIPLIERS.push(3);
         REWARD_MULTIPLIERS.push(5);
 
         REWARD_DIVIDERS.push(100);
-        REWARD_DIVIDERS.push(100);
         REWARD_DIVIDERS.push(10);
         REWARD_DIVIDERS.push(10);
+        REWARD_DIVIDERS.push(10);
+
+        REWARD_SPLIT_TRANCHES.push(12);
+        REWARD_SPLIT_TRANCHES.push(24);
+        REWARD_SPLIT_TRANCHES.push(36);
+        REWARD_SPLIT_TRANCHES.push(48);
     }
 
     function doubleProxy() public view returns(address) {
@@ -119,9 +123,10 @@ contract Stake {
 
     function stake(uint256 tier, uint256 poolPosition, uint256 originalFirstAmount, uint256 value) public payable {
         require(block.number >= _startBlock, "Staking is still not available");
-        require(originalFirstAmount > 0, "First amount must be greater than 0");
         require(poolPosition < TOKENS.length, "Unknown Pool");
         require(tier < TIME_WINDOWS.length, "Unknown tier");
+
+        require(originalFirstAmount > 0, "First amount must be greater than 0");
 
         uint256 originalSecondAmount = TOKENS[poolPosition] == WETH_ADDRESS ? msg.value : value;
         require(originalSecondAmount > 0, "Second amount must be greater than 0");
@@ -136,13 +141,13 @@ contract Stake {
 
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(tier);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
-        require(firstAmount < remainingToStake, "Amount to stake must be less than the current remaining one");
+        require(firstAmount <= remainingToStake, "Amount to stake must be less than the current remaining one");
 
         _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
 
         uint256 reward = _add(tier, poolPosition, firstAmount, secondAmount, poolAmount);
 
-        proxy.submit("transfer", abi.encode(address(0), 0, reward, address(this)));
+        proxy.submit("stakingTransfer", abi.encode(address(0), 0, reward, address(this)));
     }
 
     function getStakingInfo(uint256 tier) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
@@ -198,9 +203,7 @@ contract Stake {
                 block.timestamp + 1000
             );
         }
-        if(firstAmount < originalSecondAmount) {
-            IERC20(firstToken).transfer(msg.sender, originalSecondAmount - secondAmount);
-        }
+        require(originalFirstAmount == firstAmount, "Uniswap could not add your desired liquidity at the moment!");
         if(secondAmount < originalSecondAmount) {
             if(secondToken == WETH_ADDRESS) {
                 payable(msg.sender).transfer(originalSecondAmount - secondAmount);
@@ -211,11 +214,18 @@ contract Stake {
     }
 
     function _add(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256) {
-        uint256 rewardBlockTime = TIME_WINDOWS[tier] / REWARD_SPLIT_TRANCHES;
+        uint256 partialRewardSingleBlockTime = TIME_WINDOWS[tier] / REWARD_SPLIT_TRANCHES[tier];
+        uint256[] memory partialRewardBlockTimes = new uint256[](REWARD_SPLIT_TRANCHES[tier]);
+        if(partialRewardBlockTimes.length > 0) {
+            partialRewardBlockTimes[0] = block.number + partialRewardSingleBlockTime;
+            for(uint256 i = 1; i < partialRewardBlockTimes.length; i++) {
+                partialRewardBlockTimes[i] = partialRewardBlockTimes[i - 1] + partialRewardSingleBlockTime;
+            }
+        }
         uint256 reward = firstAmount * REWARD_MULTIPLIERS[tier] / REWARD_DIVIDERS[tier];
-        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, reward, block.number + TIME_WINDOWS[tier], rewardBlockTime, block.number + rewardBlockTime, reward / REWARD_SPLIT_TRANCHES);
+        StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, reward, block.number + TIME_WINDOWS[tier], partialRewardBlockTimes, reward / REWARD_SPLIT_TRANCHES[tier]);
         _add(tier, stakeInfo);
-        emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, stakeInfo.endBlock, rewardBlockTime, stakeInfo.nextRewardBlock, stakeInfo.splittedReward);
+        emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, stakeInfo.endBlock, partialRewardBlockTimes, stakeInfo.splittedReward);
         return stakeInfo.reward;
     }
 
@@ -236,7 +246,7 @@ contract Stake {
         delete _stakeInfo[tier][_stakeInfoLength[tier]];
     }
 
-    function length(uint256 tier) public view returns(uint256){
+    function length(uint256 tier) public view returns(uint256) {
         return _stakeInfoLength[tier];
     }
 
@@ -248,7 +258,7 @@ contract Stake {
         uint256,
         uint256,
         uint256,
-        uint256,
+        uint256[] memory,
         uint256
     ) {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
@@ -260,25 +270,36 @@ contract Stake {
             tierStakeInfo.poolAmount,
             tierStakeInfo.reward,
             tierStakeInfo.endBlock,
-            tierStakeInfo.nextRewardBlock,
+            tierStakeInfo.partialRewardBlockTimes,
             tierStakeInfo.splittedReward
         );
     }
 
     function partialReward(uint256 tier, uint256 position) public {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
-        require(block.number >= tierStakeInfo.nextRewardBlock, "Cannot actually withdraw this position");
+        if(tierStakeInfo.endBlock >= block.number) {
+            return withdraw(tier, position);
+        }
+        require(tierStakeInfo.reward > 0, "No more reward for this staking position");
+        uint256 reward = 0;
+        for(uint256 i = 0; i < tierStakeInfo.partialRewardBlockTimes.length; i++) {
+            if(tierStakeInfo.partialRewardBlockTimes[i] > 0 && tierStakeInfo.partialRewardBlockTimes[i] <= block.number) {
+                reward += tierStakeInfo.splittedReward;
+                tierStakeInfo.partialRewardBlockTimes[i] = 0;
+            }
+        }
+        reward = reward > tierStakeInfo.reward ? tierStakeInfo.reward : reward;
+        require(reward > 0, "No reward to redeem");
         IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
-        token.transfer(tierStakeInfo.sender, tierStakeInfo.splittedReward);
-        tierStakeInfo.reward = tierStakeInfo.reward - tierStakeInfo.splittedReward;
-        tierStakeInfo.nextRewardBlock = block.number + tierStakeInfo.rewardBlockTime;
+        token.transfer(tierStakeInfo.sender, reward);
+        tierStakeInfo.reward = tierStakeInfo.reward - reward;
         _stakeInfo[tier][position] = tierStakeInfo;
-        emit PartialWithdrawn(msg.sender, tierStakeInfo.sender, tier, tierStakeInfo.reward);
+        emit PartialWithdrawn(msg.sender, tierStakeInfo.sender, tier, reward);
     }
 
     function withdraw(uint256 tier, uint256 position) public {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
-        require(block.number >= tierStakeInfo.endBlock, "Cannot actually withdraw this position");
+        require(tierStakeInfo.endBlock >= block.number, "Cannot actually withdraw this position");
         IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
         if(tierStakeInfo.reward > 0) {
             token.transfer(tierStakeInfo.sender, tierStakeInfo.reward);

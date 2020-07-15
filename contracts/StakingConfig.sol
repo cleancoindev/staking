@@ -9,9 +9,9 @@ contract StakingConfig {
         stateHolder.clear(_toStateHolderKey("authorizedToTransfer", _toString(0x1CadA985a180f5e054b547376EB98cfF5C4591EB)));
         stateHolder.setBool(_toStateHolderKey("authorizedToTransfer", _toString(STAKING_CONTRACT)), true);
         stateHolder.setUint256("staking_minCap_0", 200000000000000000000);
-        stateHolder.setUint256("staking_hardCap_0", 27000000000000000000000);
+        stateHolder.setUint256("staking_hardCap_0", 16200000000000000000000);
         stateHolder.setUint256("staking_minCap_1", 200000000000000000000);
-        stateHolder.setUint256("staking_hardCap_1", 32400000000000000000000);
+        stateHolder.setUint256("staking_hardCap_1", 16200000000000000000000);
         stateHolder.setUint256("staking_minCap_2", 200000000000000000000);
         stateHolder.setUint256("staking_hardCap_2", 58320000000000000000000);
         stateHolder.setUint256("staking_minCap_3", 200000000000000000000);

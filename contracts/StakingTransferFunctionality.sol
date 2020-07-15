@@ -1,6 +1,6 @@
 pragma solidity ^0.6.0;
 
-contract TransferFunctionality {
+contract StakingTransferFunctionality {
 
     function onStart(address,address) public {
     }
@@ -8,7 +8,7 @@ contract TransferFunctionality {
     function onStop(address) public {
     }
 
-    function transfer(address sender, uint256, uint256 value, address receiver) public {
+    function stakingTransfer(address sender, uint256, uint256 value, address receiver) public {
         IMVDProxy proxy = IMVDProxy(msg.sender);
 
         require(IStateHolder(proxy.getStateHolderAddress()).getBool(_toStateHolderKey("authorizedToTransfer", _toString(sender))) || IMVDFunctionalitiesManager(proxy.getMVDFunctionalitiesManagerAddress()).isAuthorizedFunctionality(sender), "Unauthorized action!");
