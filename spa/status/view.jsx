@@ -59,20 +59,6 @@ var Status = React.createClass({
                         <h6 className="TierFree">Available</h6>
                     </section>
                 </section>}
-                <section className="statusBox">
-                    <h2>Inflation Status:</h2>
-                    {(!this.state || this.state.loadingInflation) && <Loader/>}
-                    {(!this.state || !this.state.loadingInflation) && <section className="statusAll">
-                        <section className="statusTier">
-                            <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
-                            <h6>&#127873; Total Rewards &#127873;</h6>
-                        </section>
-                        <section className="statusTier statusTierBr">
-                            <h4><b>3,500.00</b> <img src="/assets/img/buidl-logo.png"></img></h4>
-                            <h6>&#128293; Total Burned &#128293;</h6>
-                        </section>
-                    </section>}
-                </section>
             </section>
         </section>);
     }
