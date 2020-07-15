@@ -37,7 +37,7 @@ Example: 10,000 buidl staked will earn as a total reward 3,000 buidl (80 buidl w
 
 ## One Year (50% Reward)
 
-Every buidl Staked for a nine months locking period is equal to a reward of 0.5 buidl (0.01 buidl weekly).
+Every buidl Staked for a yearly locking period is equal to a reward of 0.5 buidl (0.01 buidl weekly).
 
 Example: 10,000 buidl staked will earn as a total reward 5000 buidl (100 buidl weekly)
 
