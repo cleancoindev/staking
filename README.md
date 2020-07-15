@@ -1,4 +1,6 @@
-# On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n 10497000) the buidl Staking contract will start working! 
+# buidl Liquidity Staking Mechanism V1
+
+On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n 10497000) the buidl Staking contract will start working! 
 The Staking Contract (0x9085F272D2F348a48Be31D6e66D221463677F6c7) is already deployed. 
 
 ## How it Works:
