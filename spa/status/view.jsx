@@ -30,7 +30,7 @@ var Status = React.createClass({
                     <section className="statusPosition">
                         <h5><img src="/assets/img/buidl-logo.png"></img> <b>+ {window.fromDecimals(it.cumulativeReward, 18)}</b></h5>
                         <h6>Available Weekly</h6>
-                        <a className={it.cumulativeReward !== '0' ? "ActiveRedeem" : "NoRedeem"} href="javascript:;" onClick={e => this.controller.redeem(e, it.tier, it.position)}>Redeem</a>
+                        <a className={it.cumulativeReward !== '0' && !it.canWithdraw ? "ActiveRedeem" : "NoRedeem"} href="javascript:;" onClick={e => this.controller.redeem(e, it.tier, it.position)}>Redeem</a>
                         <a className={it.canWithdraw ? "ActiveRedeem" : "NoRedeem"} href="javascript:;" onClick={e => this.controller.withdraw(e, it.tier, it.position)}>Withdraw Stake</a>
                     </section>
                 </section>)}
