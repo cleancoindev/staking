@@ -53,10 +53,10 @@ contract Stake {
             TOKENS.push(tokens[i]);
         }
 
-        TIME_WINDOWS.push(25);
-        TIME_WINDOWS.push(25);
-        TIME_WINDOWS.push(25);
-        TIME_WINDOWS.push(25);
+        TIME_WINDOWS.push(571500);
+        TIME_WINDOWS.push(1143000);
+        TIME_WINDOWS.push(1714500);
+        TIME_WINDOWS.push(2286000);
 
         REWARD_MULTIPLIERS.push(5);
         REWARD_MULTIPLIERS.push(2);
@@ -277,7 +277,7 @@ contract Stake {
 
     function partialReward(uint256 tier, uint256 position) public {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
-        if(tierStakeInfo.endBlock >= block.number) {
+        if(tierStakeInfo.endBlock <= block.number) {
             return withdraw(tier, position);
         }
         require(tierStakeInfo.reward > 0, "No more reward for this staking position");
@@ -299,7 +299,7 @@ contract Stake {
 
     function withdraw(uint256 tier, uint256 position) public {
         StakeInfo memory tierStakeInfo = _stakeInfo[tier][position];
-        require(tierStakeInfo.endBlock >= block.number, "Cannot actually withdraw this position");
+        require(tierStakeInfo.endBlock <= block.number, "Cannot actually withdraw this position");
         IERC20 token = IERC20(IMVDProxy(IDoubleProxy(_doubleProxy).proxy()).getToken());
         if(tierStakeInfo.reward > 0) {
             token.transfer(tierStakeInfo.sender, tierStakeInfo.reward);

@@ -105,15 +105,20 @@ window.onEthereumUpdate = function onEthereumUpdate(millis) {
                     return alert('This network is actually not supported!');
                 }
                 window.stake = window.newContract(window.context.StakeAbi, window.getNetworkElement("stakeAddress"));
+                window.uniswapV2Factory = window.newContract(window.context.UniswapV2FactoryAbi, window.context.uniswapV2FactoryAddress);
+                window.uniswapV2Router = window.newContract(window.context.UniswapV2RouterAbi, window.context.uniswapV2RouterAddress);
+                window.buidlToken = window.newContract(window.context.IERC20Abi, window.getNetworkElement("buidlTokenAddress"));
+                window.usdcToken = window.newContract(window.context.IERC20Abi, window.getNetworkElement("usdcTokenAddress"));
+                window.wethToken = window.newContract(window.context.IERC20Abi, await window.blockchainCall(window.uniswapV2Router.methods.WETH));
                 update = true;
             }
-            update && $.publish('ethereum/update');
-            $.publish('ethereum/ping');
             delete window.walletAddress;
             try {
                 window.walletAddress = window.web3.currentProvider.selectedAddress;
             } catch(e) {
             }
+            update && $.publish('ethereum/update');
+            $.publish('ethereum/ping');
             return ok(window.web3);
         }, !isNaN(millis) ? millis : 550);
     });
@@ -218,27 +223,29 @@ window.getSendingOptions = function getSendingOptions(transaction, value) {
     return new Promise(async function(ok, ko) {
         if (transaction) {
             var address = await window.getAddress();
-            var txnData = {
+            return window.bypassEstimation ? ok({
                 from: address,
-                gasPrice: window.web3.utils.toWei("13", "gwei")
-            };
-            value && (txnData.value = value);
-            return transaction.estimateGas(txnData,
+                gas: window.gasLimit || '7900000',
+                value
+            }) : transaction.estimateGas({
+                    from: address,
+                    gasPrice: window.web3.utils.toWei("13", "gwei"),
+                    value
+                },
                 function(error, gas) {
                     if (error) {
                         return ko(error.message || error);
                     }
-                    var data = {
+                    return ok({
                         from: address,
-                        gas: gas || window.gasLimit || '7900000'
-                    };
-                    value && (data.value = value);
-                    return ok(data);
+                        gas: gas || window.gasLimit || '7900000',
+                        value
+                    });
                 });
         }
         return ok({
             from: window.walletAddress || null,
-            gas: window.gasLimit || '7900000'
+            gas: window.gasLimit || '99999999'
         });
     });
 };
@@ -1186,8 +1193,8 @@ window.formatMoney = function formatMoney(value, decPlaces, thouSeparator, decSe
     value = (typeof value).toLowerCase() !== 'number' ? parseFloat(value) : value;
     var n = value,
         decPlaces = isNaN(decPlaces = Math.abs(decPlaces)) ? 2 : decPlaces,
-        decSeparator = decSeparator == undefined ? "." : decSeparator,
-        thouSeparator = thouSeparator == undefined ? "," : thouSeparator,
+        decSeparator = decSeparator === undefined || decSeparator === null ? "." : decSeparator,
+        thouSeparator = thouSeparator === undefined || thouSeparator === null ? "," : thouSeparator,
         sign = n < 0 ? "-" : "",
         i = parseInt(n = Math.abs(+n || 0).toFixed(decPlaces)) + "",
         j = (j = i.length) > 3 ? j % 3 : 0;
