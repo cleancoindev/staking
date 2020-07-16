@@ -3,6 +3,8 @@
 On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n 10497000) the buidl Staking contract will start working! 
 The Staking Contract (0x9085F272D2F348a48Be31D6e66D221463677F6c7) is already deployed. 
 
+Etherscan: https://etherscan.io/address/0x9085f272d2f348a48be31d6e66d221463677f6c7
+
 ## How it Works:
 
 The DFOhub Liquidity Staking Mechanism is designed to reward Uniswap V2 liquidity Providers (buidl-ETH and buidl-USDC exchanges) to lock long-therm liquidity.
