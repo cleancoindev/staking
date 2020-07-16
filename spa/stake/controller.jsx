@@ -26,10 +26,11 @@ var StakeController = function (view) {
         var buidlPosition  = (await window.blockchainCall(pair.methods.token0)).toLowerCase() === window.buidlToken.options.address ? 0 : 1;
         var otherPosition = buidlPosition == 0 ? 1 : 0;
         var reserves = await window.blockchainCall(pair.methods.getReserves);
-        reserves[0] = parseFloat(window.fromDecimals(reserves[0], 18, true));
-        reserves[1] = parseFloat(window.fromDecimals(reserves[1], 18, true));
+        reserves[0] = parseFloat(window.fromDecimals(reserves[0], buidlPosition === 0 || secondToken === window.wethToken ? 18 : 6, true));
+        reserves[1] = parseFloat(window.fromDecimals(reserves[1], buidlPosition === 1 || secondToken === window.wethToken ? 18 : 6, true));
         var budilPerSecond = reserves[buidlPosition] / reserves[otherPosition];
         var secondPerBuidl = reserves[otherPosition] / reserves[buidlPosition];
+        console.log(budilPerSecond, secondPerBuidl);
         return {
             budilPerSecond,
             secondPerBuidl
@@ -40,8 +41,10 @@ var StakeController = function (view) {
         var buidlBalance = parseFloat(window.fromDecimals(await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress), 18, true));
         var secondTokenData = await context.getSecondTokenData(i = i || 0);
         var secondBalance =  parseFloat(window.fromDecimals(secondTokenData.balance, i === 0 ? 18 : 6, true));
-        target === 'firstAmount' && (buidlBalance = buidlBalance - (buidlBalance * window.context.uniswapDecurtation));
-        target === 'secondAmount' && (secondBalance = secondBalance - (secondBalance * window.context.uniswapDecurtation));
+        var budilDecurtation = parseFloat(window.fromDecimals('1', 18));
+        var secondDecurtation = parseFloat(window.fromDecimals('1', i === 0 ? 18 : 6));
+        target === 'firstAmount' && (buidlBalance = buidlBalance - (buidlBalance * budilDecurtation));
+        target === 'secondAmount' && (secondBalance = secondBalance - (secondBalance * secondDecurtation));
         context.view[target].value = parseFloat(window.formatMoney(target === 'firstAmount' ? buidlBalance : secondBalance, window.context.uiDecimals, ''));
         target === 'firstAmount' && context.calculateReward(tier);
         context.calculateOther(target, i, tier);
@@ -58,7 +61,7 @@ var StakeController = function (view) {
     context.calculateReward = async function calculateReward(tier) {
         var tierData = await context.getTierData();
         tierData = [tierData[1][tier], tierData[2][tier]];
-        var value = window.web3.utils.toBN(window.toDecimals(context.view["firstAmount"].value, 18)).mul(window.web3.utils.toBN(tierData[0])).div(window.web3.utils.toBN(tierData[1])).toString();
+        var value = window.web3.utils.toBN(window.toDecimals(context.view.firstAmount.value, 18)).mul(window.web3.utils.toBN(tierData[0])).div(window.web3.utils.toBN(tierData[1])).toString();
         context.view.reward.innerText = window.fromDecimals(value, 18);
     };
 

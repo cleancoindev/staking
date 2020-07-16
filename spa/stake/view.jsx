@@ -24,7 +24,8 @@ var Stake = React.createClass({
     changeSecond(e) {
         var split = e.currentTarget.value.split("_");
         this.logo.src = "assets/img/" + split[1] + "-logo.png";
-        this.refreshData();
+        this.controller.calculateOther("firstAmount", parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
+        this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
     max(e) {
         this.refreshData(e.currentTarget.dataset.target);
