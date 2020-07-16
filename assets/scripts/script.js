@@ -1198,5 +1198,15 @@ window.formatMoney = function formatMoney(value, decPlaces, thouSeparator, decSe
         sign = n < 0 ? "-" : "",
         i = parseInt(n = Math.abs(+n || 0).toFixed(decPlaces)) + "",
         j = (j = i.length) > 3 ? j % 3 : 0;
-    return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
+    var formatted = sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
+    var split = formatted.split(decSeparator);
+    if(split.length > 1) {
+        while(split[1].length > 0 && split[1].lastIndexOf('0') === (split[1].length - 1)) {
+            split[1] = split[1].substring(0, split[1].length - 1);
+        }
+        while(split[1].length < 2) {
+            split[1] += '0';
+        }
+    }
+    return split.join(decSeparator);
 };

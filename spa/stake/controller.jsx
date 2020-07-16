@@ -23,14 +23,13 @@ var StakeController = function (view) {
 
     context.calculateReserves = async function calculate(secondToken) {
         var pair = window.newContract(window.context.UniswapV2PairAbi, await window.blockchainCall(window.uniswapV2Factory.methods.getPair, window.buidlToken.options.address, secondToken.options.address));
-        var buidlPosition  = (await window.blockchainCall(pair.methods.token0)).toLowerCase() === window.buidlToken.options.address ? 0 : 1;
+        var buidlPosition  = (await window.blockchainCall(pair.methods.token0)).toLowerCase() === window.buidlToken.options.address.toLowerCase() ? 0 : 1;
         var otherPosition = buidlPosition == 0 ? 1 : 0;
         var reserves = await window.blockchainCall(pair.methods.getReserves);
-        reserves[0] = parseFloat(window.fromDecimals(reserves[0], buidlPosition === 0 || secondToken === window.wethToken ? 18 : 6, true));
-        reserves[1] = parseFloat(window.fromDecimals(reserves[1], buidlPosition === 1 || secondToken === window.wethToken ? 18 : 6, true));
+        reserves[0] = parseFloat(window.fromDecimals(reserves[0], buidlPosition === 0 || secondToken.options.address.toLowerCase() === window.wethToken.options.address.toLowerCase() ? 18 : 6, true));
+        reserves[1] = parseFloat(window.fromDecimals(reserves[1], buidlPosition === 1 || secondToken.options.address.toLowerCase() === window.wethToken.options.address.toLowerCase() ? 18 : 6, true));
         var budilPerSecond = reserves[buidlPosition] / reserves[otherPosition];
         var secondPerBuidl = reserves[otherPosition] / reserves[buidlPosition];
-        console.log(budilPerSecond, secondPerBuidl);
         return {
             budilPerSecond,
             secondPerBuidl
@@ -53,8 +52,8 @@ var StakeController = function (view) {
     context.calculateOther = async function calculateOther(target, i, tier) {
         var reserves = await context.calculateReserves((await context.getSecondTokenData(i, true)).token);
         var value = parseFloat(context.view[target].value || '0');
-        value *= reserves[target === 'firstAmount' ? 'budilPerSecond' : 'secondPerBuidl'];
-        context.view[target === 'firstAmount' ? 'secondAmount' : 'firstAmount'].value = parseFloat(window.formatMoney(value, window.context.uiDecimals, ''));
+        value *= reserves[target === 'firstAmount' ? 'secondPerBuidl' : 'buidlPerSecond'];
+        context.view[target === 'firstAmount' ? 'secondAmount' : 'firstAmount'].value = window.formatMoney(value, target === 'firstAmount' && i == 1 ? 6 : 18, '');
         context.calculateReward(tier);
     };
 
@@ -81,6 +80,13 @@ var StakeController = function (view) {
 
     context.stake = async function stake(pool, tier) {
         var firstAmount = window.toDecimals(context.view.firstAmount.value, 18);
+        var stakingInfo = await window.blockchainCall(window.stake.methods.getStakingInfo, tier);
+        if(parseInt(firstAmount) < parseInt(stakingInfo[0])) {
+            return alert("Amount to stake is less than the current min cap");
+        }
+        if(parseInt(firstAmount) > parseInt(stakingInfo[2])) {
+            return alert("Amount to stake must be less than the current remaining one");
+        }
         var secondAmount = window.toDecimals(context.view.secondAmount.value, pool === 0 ? 18 : 6);
         var eth = pool === 0 ? secondAmount : undefined;
         var value = pool === 0 ? '0' : secondAmount;
