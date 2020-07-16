@@ -82,8 +82,8 @@ contract Stake {
         return TOKENS;
     }
 
-    function tierData() public view returns(uint256[] memory, uint256[] memory, uint256[] memory) {
-        return (TIME_WINDOWS, REWARD_MULTIPLIERS, REWARD_DIVIDERS);
+    function tierData() public view returns(uint256[] memory, uint256[] memory, uint256[] memory, uint256[] memory) {
+        return (TIME_WINDOWS, REWARD_MULTIPLIERS, REWARD_DIVIDERS, REWARD_SPLIT_TRANCHES);
     }
 
     function startBlock() public view returns(uint256) {
@@ -155,7 +155,7 @@ contract Stake {
         remainingToStake = hardCap;
         uint256 length = _stakeInfoLength[tier];
         for(uint256 i = 0; i < length; i++) {
-            if(_stakeInfo[tier][i].endBlock < block.number) {
+            if(_stakeInfo[tier][i].endBlock > block.number) {
                 remainingToStake -= _stakeInfo[tier][i].firstAmount;
             }
         }
