@@ -1,5 +1,7 @@
 # buidl Liquidity Staking Mechanism V1
 
+<img src="/assets/img/syb.gif">
+
 On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n 10497000) the buidl Staking contract will start working! 
 The Staking Contract (0x9085F272D2F348a48Be31D6e66D221463677F6c7) is already deployed. 
 
@@ -60,6 +62,8 @@ In order to not exceed the 30% of the FI V2, every Lock Tier has a limited numbe
 ### Nine Months: 58,320 Max buidl staked at the same time.
 
 ### One Year: 63,504 Max buidl staked at the same time.
+
+<img src="/assets/img/liquidity-staking.png">
 
 # GUI
 
