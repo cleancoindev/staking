@@ -59,9 +59,11 @@ var StakeController = function (view) {
 
     context.calculateReward = async function calculateReward(tier) {
         var tierData = await context.getTierData();
-        tierData = [tierData[1][tier], tierData[2][tier]];
+        tierData = [tierData[1][tier], tierData[2][tier], window.context.rewardSplitTranches[tier]];
         var value = window.web3.utils.toBN(window.toDecimals(context.view.firstAmount.value, 18)).mul(window.web3.utils.toBN(tierData[0])).div(window.web3.utils.toBN(tierData[1])).toString();
         context.view.reward.innerText = window.fromDecimals(value, 18);
+        var splittedValue = window.web3.utils.toBN(value).div(window.web3.utils.toBN(tierData[2]));
+        context.view.splittedReward.innerText = window.fromDecimals(splittedValue, 18);
     };
 
     context.getSecondTokenData = async function getSecondTokenData(i, tokenOnly) {
