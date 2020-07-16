@@ -57,14 +57,14 @@ var Stake = React.createClass({
         var _this = this;
         return (<section>
             <section className="switchBox">
-                <h3>Stake buidl/eth Liquidity</h3>
+                <h3>Stake Uniswap Liquidity</h3>
                 <section className="switchTools">
                     <a data-target="firstAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
                     <input ref={ref => this.firstAmount = ref} type="number" data-target="firstAmount" onChange={this.onChangeAmount}/>
                     <aside className="switchLink" target="_blank">buidl</aside>
                     <img src="assets/img/buidl-logo.png"/>
                 </section>
-                <section className="switchTools">
+                <section className="switchTools switchTools2">
                     {false && <a data-target="secondAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>}
                     <input ref={ref => this.secondAmount = ref} type="number" data-target="secondAmount" onChange={this.onChangeAmount}/>
                     <select ref={ref => this.pool = ref} className="switchLink" target="_blank" onChange={this.changeSecond}>
@@ -82,6 +82,12 @@ var Stake = React.createClass({
                 </section>
                 <h3>Total Reward</h3>
                 <section className="switchTools">
+                    <span ref={ref => this.reward = ref} className="switchFinal">0</span>
+                    <aside className="switchLink" >buidl</aside>
+                    <img src="/assets/img/buidl-logo.png"></img>
+                </section>
+                <h3 className="switchWeek">Weekly</h3>
+                <section className="switchTools switchToolsWeek">
                     <span ref={ref => this.reward = ref} className="switchFinal">0</span>
                     <aside className="switchLink" >buidl</aside>
                     <img src="/assets/img/buidl-logo.png"></img>

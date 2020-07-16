@@ -78,6 +78,12 @@ figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margi
 .TierFree {color: #09b439;}
 .statusTierBr h4,.statusTierBr h6 {color: #f90e19;}
 .statusTierRw h4, .statusTierRw h6 {color: #f1f1f1;}
+.switchWeek {font-size: 14px; margin: 0; margin-top: 10px;}
+.switchToolsWeek {padding: 1%;}
+.switchToolsWeek .switchFinal {font-size: 13px;}
+.switchToolsWeek .switchLink {font-size: 13px;}
+.switchToolsWeek img {width: 15px; height: 15px;}
+.switchTools2 > input {margin-left: 61px;}
 
 
 @media only screen and (min-width: 640px) {

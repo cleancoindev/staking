@@ -22,7 +22,7 @@ var Status = React.createClass({
                     <section className="statusPosition">
                         <h5><a target="_Bloank" href="https://etherscan.io/block/countdown/10462235">10462235</a></h5>
                         <h6>Lock End Block</h6>
-                        <a className="NoRedeem">Redeem</a>
+                        <a className="NoRedeem">Withdraw</a>
                     </section>
                 </section>}
             </section>
