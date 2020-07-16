@@ -75,9 +75,9 @@ var Stake = React.createClass({
                 </section>
                 <h3>Duration</h3>
                 <section className="switchTools">
-                    <a data-tier="0" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Month</a>
-                    <a data-tier="1" className="TimetoStake SelectedDutrationStake" href="javascript:;" onClick={this.onTier}>3 Months</a>
-                    <a data-tier="2" className="TimetoStake" href="javascript:;" onClick={this.onTier}>6 Months</a>
+                    <a data-tier="0" className="TimetoStake" href="javascript:;" onClick={this.onTier}>3 Month</a>
+                    <a data-tier="1" className="TimetoStake SelectedDutrationStake" href="javascript:;" onClick={this.onTier}>6 Months</a>
+                    <a data-tier="2" className="TimetoStake" href="javascript:;" onClick={this.onTier}>9 Months</a>
                     <a data-tier="3" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Year</a>
                 </section>
                 <h3>Total Reward</h3>
