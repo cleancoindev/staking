@@ -88,7 +88,7 @@ var Stake = React.createClass({
                 </section>
                 <h3 className="switchWeek">Weekly</h3>
                 <section className="switchTools switchToolsWeek">
-                    <span ref={ref => this.reward = ref} className="switchFinal">0</span>
+                    <span ref={ref => this.splittedReward = ref} className="switchFinal">0</span>
                     <aside className="switchLink" >buidl</aside>
                     <img src="/assets/img/buidl-logo.png"></img>
                 </section>
