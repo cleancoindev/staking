@@ -37,7 +37,12 @@ var StakeController = function (view) {
     };
 
     context.max = async function max(target, i, tier) {
-        var buidlBalance = parseFloat(window.fromDecimals(await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress), 18, true));
+        var buidlBalance = parseInt(await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress));
+        if(target === 'firstAmount') {
+            var tierData = parseInt((await window.blockchainCall(window.stake.methods.getStakingInfo, tier))[1]);
+            buidlBalance = buidlBalance > tierData ? tierData : buidlBalance;
+        }
+        buidlBalance = parseFloat(window.fromDecimals(buidlBalance, 18, true));
         var secondTokenData = await context.getSecondTokenData(i = i || 0);
         var secondBalance =  parseFloat(window.fromDecimals(secondTokenData.balance, i === 0 ? 18 : 6, true));
         var budilDecurtation = parseFloat(window.fromDecimals('1', 18));
