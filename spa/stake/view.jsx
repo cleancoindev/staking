@@ -57,7 +57,7 @@ var Stake = React.createClass({
         var _this = this;
         return (<section>
             <section className="switchBox">
-                <h3>Stake Uniswap Liquidity</h3>
+                <h3>&#129412; + &#9203; = &#127873;</h3>
                 <section className="switchTools">
                     <a data-target="firstAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
                     <input ref={ref => this.firstAmount = ref} type="number" data-target="firstAmount" onChange={this.onChangeAmount}/>
@@ -73,14 +73,14 @@ var Stake = React.createClass({
                     </select>
                     <img ref={ref => this.logo = ref} src="assets/img/eth-logo.png"/>
                 </section>
-                <h3>Duration</h3>
+                <h3>&#9203; Duration</h3>
                 <section className="switchTools">
                     <a data-tier="0" className="TimetoStake" href="javascript:;" onClick={this.onTier}>3 Month</a>
                     <a data-tier="1" className="TimetoStake SelectedDutrationStake" href="javascript:;" onClick={this.onTier}>6 Months</a>
                     <a data-tier="2" className="TimetoStake" href="javascript:;" onClick={this.onTier}>9 Months</a>
                     <a data-tier="3" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Year</a>
                 </section>
-                <h3>Total Reward</h3>
+                <h3>&#127873; Total Reward</h3>
                 <section className="switchTools">
                     <span ref={ref => this.reward = ref} className="switchFinal">0</span>
                     <aside className="switchLink" >buidl</aside>

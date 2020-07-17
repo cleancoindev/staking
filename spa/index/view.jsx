@@ -43,7 +43,7 @@ var Index = React.createClass({
                 </section>*/}
                 <header className="Head">
                     <section className="HBrand">
-                        <h6>$buidl Stake</h6>
+                        <h6><img src="/assets/img/buidl-logo.png"></img> &#129412; Liquidity Stake</h6>
                     </section>
                     <section className="HActions">
                         <a href="https://dfohub.com" target="_Blank">#dfohub</a>
