@@ -5,16 +5,10 @@ ol,ul, li {margin-block-start: 0; margin-block-end: 0; list-style-type: none; pa
 p {display: inline-block;margin-block-start: 0px;margin-block-end: 0px;margin-inline-start: 0px;margin-inline-end: 0px;}
 p, h1, h2, h3, h4, h5, h6, a, label, aside {color: #f1f1f1;}
 figure {margin-block-start: 0;margin-block-end: 0;margin-inline-start: 0px;margin-inline-end: 0px;}
-.loader {width: 58.88px; height: 58.88px; display: inline-block;}
+.loader {width: 120px; height: 120px; display: inline-block;}
+.loader img {width: 120px; height: 120px;}
 .statusBox .loader {margin: 20px auto;}
 
-@keyframes ldio-2w6250r221a {0% { transform: rotate(0deg) }100% { transform: rotate(360deg) }}
-.ldio-2w6250r221a > div > div {position: absolute;border-radius: 50%;}
-.ldio-2w6250r221a > div > div:nth-child(1) {top: 4px;left: 4px;width: 92px;height: 92px;background: #09b439;}
-.ldio-2w6250r221a > div > div:nth-child(2) {top: 4px;left: 42.64px;width: 14.72px;height: 14.72px;background: #ffffff;animation: ldio-2w6250r221a 0.5464480874316939s linear infinite;transform-origin: 7.36px 46px;}
-.loadingio-spinner-disk-bluuznaj8 {width: 64px;height: 64px;display: inline-block;overflow: hidden;background: none;}
-.ldio-2w6250r221a {width: 100%;height: 100%;position: relative;transform: translateZ(0) scale(0.64);backface-visibility: hidden;transform-origin: 0 0;}
-.ldio-2w6250r221a div { box-sizing: content-box; }
 .OnePage {width: 100%; display: inline-block; overflow-x: hidden; text-align: center;}
 .Head {width: 100%; display: inline-block; height: auto; background-color: #151417; padding: 25px 0; text-align: center;}
 .HBrand {width: 60%; vertical-align: middle; display: inline-block; text-align: left;}
