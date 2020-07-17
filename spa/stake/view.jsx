@@ -5,7 +5,7 @@ var Stake = React.createClass({
     ],
     getDefaultSubscriptions() {
         return {
-            'ethereum/ping' : this.refreshData
+            'ethereum/ping' : this.componentDidMount
         };
     },
     getInitialState() {
@@ -28,13 +28,9 @@ var Stake = React.createClass({
         this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
     max(e) {
-        this.refreshData(e.currentTarget.dataset.target);
+        this.controller.max(e.currentTarget.dataset.target, parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
     },
     componentDidMount() {
-        this.refreshData();
-    },
-    refreshData(target) {
-        this.controller.max(target !== 'firstAmount' && target !== 'secondAmount' ? 'firstAmount' : target, parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
         this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
     onChangeAmount(e) {
@@ -60,13 +56,13 @@ var Stake = React.createClass({
                 <h3>&#129412; + &#9203; = &#127873;</h3>
                 <section className="switchTools">
                     <a data-target="firstAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
-                    <input ref={ref => this.firstAmount = ref} type="number" data-target="firstAmount" onChange={this.onChangeAmount}/>
+                    <input ref={ref => this.firstAmount = ref} type="text" placeholder="0.0" spellcheck="false" autocomplete="off" autocorrect="off" inputmode="decimal" pattern="^[0-9][.,]?[0-9]$" data-target="firstAmount" onChange={this.onChangeAmount}/>
                     <aside className="switchLink" target="_blank">buidl</aside>
                     <img src="assets/img/buidl-logo.png"/>
                 </section>
                 <section className="switchTools switchTools2">
                     {false && <a data-target="secondAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>}
-                    <input ref={ref => this.secondAmount = ref} type="number" data-target="secondAmount" onChange={this.onChangeAmount}/>
+                    <input ref={ref => this.secondAmount = ref} type="text" placeholder="0.0" spellcheck="false" autocomplete="off" autocorrect="off" inputmode="decimal" pattern="^[0-9][.,]?[0-9]$" data-target="secondAmount" onChange={this.onChangeAmount} disabled/>
                     <select ref={ref => this.pool = ref} className="switchLink" target="_blank" onChange={this.changeSecond}>
                         <option value="0_eth" selected>eth</option>
                         <option value="1_usdc">usdc</option>

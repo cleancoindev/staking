@@ -1,3 +1,7 @@
+/**
+ *Submitted for verification at Etherscan.io on 2020-07-17
+*/
+
 pragma solidity ^0.6.0;
 
 contract Stake {
@@ -121,7 +125,7 @@ contract Stake {
         }
     }
 
-    function stake(uint256 tier, uint256 poolPosition, uint256 originalFirstAmount, uint256 value) public payable {
+    function stake(uint256 tier, uint256 poolPosition, uint256 originalFirstAmount, uint256 firstAmountMin, uint256 value, uint256 secondAmountMin) public payable {
         require(block.number >= _startBlock, "Staking is still not available");
         require(poolPosition < TOKENS.length, "Unknown Pool");
         require(tier < TIME_WINDOWS.length, "Unknown tier");
@@ -136,18 +140,18 @@ contract Stake {
 
         _transferTokensAndCheckAllowance(tokenAddress, originalFirstAmount);
         _transferTokensAndCheckAllowance(TOKENS[poolPosition], originalSecondAmount);
+        
+        address secondToken = TOKENS[poolPosition];
 
-        (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, originalSecondAmount, tokenAddress, TOKENS[poolPosition]);
+        (uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) = _createPoolToken(originalFirstAmount, firstAmountMin, originalSecondAmount, secondAmountMin, tokenAddress, secondToken);
+
+        _totalPoolAmount[poolPosition] += poolAmount;
 
         (uint256 minCap,, uint256 remainingToStake) = getStakingInfo(tier);
         require(firstAmount >= minCap, "Amount to stake is less than the current min cap");
         require(firstAmount <= remainingToStake, "Amount to stake must be less than the current remaining one");
 
-        _totalPoolAmount[poolPosition] = _totalPoolAmount[poolPosition] + poolAmount;
-
-        uint256 reward = _add(tier, poolPosition, firstAmount, secondAmount, poolAmount);
-
-        proxy.submit("stakingTransfer", abi.encode(address(0), 0, reward, address(this)));
+        calculateRewardAndAddStakingPosition(tier, poolPosition, firstAmount, secondAmount, poolAmount, proxy);
     }
 
     function getStakingInfo(uint256 tier) public view returns(uint256 minCap, uint256 hardCap, uint256 remainingToStake) {
@@ -181,13 +185,13 @@ contract Stake {
         }
     }
 
-    function _createPoolToken(uint256 originalFirstAmount, uint256 originalSecondAmount, address firstToken, address secondToken) private returns(uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) {
+    function _createPoolToken(uint256 originalFirstAmount, uint256 firstAmountMin, uint256 originalSecondAmount, uint256 secondAmountMin, address firstToken, address secondToken) private returns(uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) {
         if(secondToken == WETH_ADDRESS) {
             (firstAmount, secondAmount, poolAmount) = IUniswapV2Router(UNISWAP_V2_ROUTER).addLiquidityETH{value: originalSecondAmount}(
                 firstToken,
                 originalFirstAmount,
-                originalFirstAmount,
-                originalSecondAmount,
+                firstAmountMin,
+                secondAmountMin,
                 address(this),
                 block.timestamp + 1000
             );
@@ -197,13 +201,15 @@ contract Stake {
                 secondToken,
                 originalFirstAmount,
                 originalSecondAmount,
-                originalFirstAmount,
-                originalSecondAmount,
+                firstAmountMin,
+                secondAmountMin,
                 address(this),
                 block.timestamp + 1000
             );
         }
-        require(originalFirstAmount == firstAmount, "Uniswap could not add your desired liquidity at the moment!");
+        if(firstAmount < originalFirstAmount) {
+            IERC20(firstToken).transfer(msg.sender, originalFirstAmount - firstAmount);
+        }
         if(secondAmount < originalSecondAmount) {
             if(secondToken == WETH_ADDRESS) {
                 payable(msg.sender).transfer(originalSecondAmount - secondAmount);
@@ -213,7 +219,7 @@ contract Stake {
         }
     }
 
-    function _add(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount) private returns(uint256) {
+    function calculateRewardAndAddStakingPosition(uint256 tier, uint256 poolPosition, uint256 firstAmount, uint256 secondAmount, uint256 poolAmount, IMVDProxy proxy) private {
         uint256 partialRewardSingleBlockTime = TIME_WINDOWS[tier] / REWARD_SPLIT_TRANCHES[tier];
         uint256[] memory partialRewardBlockTimes = new uint256[](REWARD_SPLIT_TRANCHES[tier]);
         if(partialRewardBlockTimes.length > 0) {
@@ -225,8 +231,8 @@ contract Stake {
         uint256 reward = firstAmount * REWARD_MULTIPLIERS[tier] / REWARD_DIVIDERS[tier];
         StakeInfo memory stakeInfo = StakeInfo(msg.sender, poolPosition, firstAmount, secondAmount, poolAmount, reward, block.number + TIME_WINDOWS[tier], partialRewardBlockTimes, reward / REWARD_SPLIT_TRANCHES[tier]);
         _add(tier, stakeInfo);
+        proxy.submit("stakingTransfer", abi.encode(address(0), 0, reward, address(this)));
         emit Staked(msg.sender, tier, poolPosition, firstAmount, secondAmount, poolAmount, reward, stakeInfo.endBlock, partialRewardBlockTimes, stakeInfo.splittedReward);
-        return stakeInfo.reward;
     }
 
     function _add(uint256 tier, StakeInfo memory element) private returns(uint256, uint256) {
