@@ -48,7 +48,7 @@ var Index = React.createClass({
                     <section className="HActions">
                         <a href="https://dfohub.com" target="_Blank">#dfohub</a>
                         <a href="https://github.com/b-u-i-d-l/staking" target="_Blank">#github</a>
-                        <a href="" target="_Blank">#etherscan</a>
+                        <a href={window.getNetworkElement("etherscanURL") + "address/" + window.getNetworkElement("stakeAddress")} target="_blank">#etherscan</a>
                     </section>
                 </header>
                 <section className="PagerMenu">
