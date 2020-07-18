@@ -39,7 +39,7 @@ var Status = React.createClass({
                 {(!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.length === 0 && <h3>There are no opened staking positions for you right now</h3>}
             </section>
             <section className="statusBox">
-                <h2>Liquidity Stake Status:</h2>
+                <h2>&#129385; Status:</h2>
                 <section className="statusAll">
                     <StakingInfo tier="0" title="3 Months"/>
                     <StakingInfo tier="1" title="6 Months"/>

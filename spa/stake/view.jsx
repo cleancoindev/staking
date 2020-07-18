@@ -62,8 +62,14 @@ var Stake = React.createClass({
     render() {
         var _this = this;
         return (<section>
+            <section className="boxAYOR">
+                <section className="boxAYORTEXT">
+                    <h2>&#128680; Disclamer &#128680;</h2>
+                    <p>buidl Staking works using Uniswap V2, buidled by the uniswap team. Before considering to stake your buidl, we kindly recomend you to read carefully about how Uniswap Liquidity works and every prices risks connected with the uniswap Liquidity Providers rules <a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a>. Do it at your own risk!</p>
+                </section>
+            </section>
             <section className="switchBox">
-                <h3>&#129412; + &#9203; = &#127873;</h3>
+                <h3>&#129412; + &#9203; + &#129385; = &#127873;</h3>
                 <section className="switchTools">
                     <a data-target="firstAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>
                     <input ref={ref => this.firstAmount = ref} type="text" placeholder="0.0" spellcheck="false" autocomplete="off" autocorrect="off" inputmode="decimal" pattern="^[0-9][.,]?[0-9]$" data-target="firstAmount" onChange={this.onChangeAmount}/>
