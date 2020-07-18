@@ -2,12 +2,10 @@ pragma solidity ^0.6.0;
 
 contract StakingConfig {
 
-    address private constant STAKING_CONTRACT = 0xe60b27f121190b1FDBCfe285Bef290b704FF6DA5;
+    address private constant STAKING_CONTRACT = 0xb81DDC1BCB11FC722d6F362F4357787E6F958ce0;
 
     function callOneTime(address) public {
         IStateHolder stateHolder = IStateHolder(IMVDProxy(msg.sender).getStateHolderAddress());
-        stateHolder.clear(_toStateHolderKey("authorizedToTransfer", _toString(0xcf5Ed6A1Da2ca44Cfc5DC66CAC84941D7a9Cc16c)));
-        //stateHolder.clear(_toStateHolderKey("authorizedToTransferForStaking", _toString(0x1CadA985a180f5e054b547376EB98cfF5C4591EB)));
         stateHolder.setBool(_toStateHolderKey("authorizedToTransferForStaking", _toString(STAKING_CONTRACT)), true);
         stateHolder.setUint256("staking_minCap_0", 200000000000000000000);
         stateHolder.setUint256("staking_hardCap_0", 16200000000000000000000);
