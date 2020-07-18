@@ -46,6 +46,7 @@ var StatusController = function (view) {
     };
 
     context.redeem = async function redeem(e, tier, position) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         if($(e.currentTarget).hasClass('NoRedeem')) {
             return;
         }
@@ -54,6 +55,7 @@ var StatusController = function (view) {
     }
 
     context.withdraw = async function withdraw(e, tier, position) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         if($(e.currentTarget).hasClass('NoRedeem')) {
             return;
         }
