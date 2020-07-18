@@ -41,7 +41,8 @@ var StakeController = function (view) {
         var value = reserves[target === 'firstAmount' ? 'secondPerBuidl' : 'buidlPerSecond'].multiply(window.toDecimals(context.view[target].value.split(',').join('') || '0', i === 1 ? 6 : 18));
         value = new UniswapFraction(value.toSignificant(100).split('.')[0]);
         context.view[target === 'firstAmount' ? 'secondAmount' : 'firstAmount'].value = value.divide(10 ** (target === 'firstAmount' && i == 1 ? 6 : 18)).toSignificant(6);
-        context.calculateReward(tier);
+        target === "firstAmount" && context.calculateReward(tier);
+        console.log(value.toSignificant(100));
         return value;
     };
 
@@ -59,13 +60,18 @@ var StakeController = function (view) {
         };
     };
 
-    context.calculateReward = async function calculateReward(tier) {
-        var tierData = await context.getTierData();
-        tierData = [tierData[1][tier], tierData[2][tier], tierData[3][tier]];
-        var value = window.web3.utils.toBN(window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18)).mul(window.web3.utils.toBN(tierData[0])).div(window.web3.utils.toBN(tierData[1])).toString();
-        context.view.reward.innerText = window.fromDecimals(value, 18);
-        var splittedValue = window.web3.utils.toBN(value).div(window.web3.utils.toBN(tierData[2]));
-        context.view.splittedReward.innerText = window.fromDecimals(splittedValue, 18);
+    context.calculateReward = function calculateReward(tier) {
+        setTimeout(async function() {
+            try {
+                var tierData = await context.getTierData();
+                tierData = [tierData[1][tier], tierData[2][tier], tierData[3][tier]];
+                var value = window.web3.utils.toBN(window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18)).mul(window.web3.utils.toBN(tierData[0])).div(window.web3.utils.toBN(tierData[1])).toString();
+                context.view.reward.innerText = window.fromDecimals(value, 18);
+                var splittedValue = window.web3.utils.toBN(value).div(window.web3.utils.toBN(tierData[2]));
+                context.view.splittedReward.innerText = window.fromDecimals(splittedValue, 18);
+            } catch(e) {
+            }
+        });
     };
 
     context.getSecondTokenData = async function getSecondTokenData(i, tokenOnly) {
@@ -76,10 +82,14 @@ var StakeController = function (view) {
     };
 
     context.getTierData = async function getTierData() {
-        if(!context.tierData) {
-            context.tierData = await window.blockchainCall(window.stake.methods.tierData);
+        try {
+            if(!context.tierData) {
+                context.tierData = await window.blockchainCall(window.stake.methods.tierData);
+            }
+            return JSON.parse(JSON.stringify(context.tierData));
+        } catch(e) {
+            return [];
         }
-        return JSON.parse(JSON.stringify(context.tierData));
     };
 
     context.stake = async function stake(pool, tier) {

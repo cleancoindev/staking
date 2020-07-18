@@ -15,6 +15,7 @@ var Stake = React.createClass({
         }
     },
     onTier(e) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         $($(e.currentTarget).parent()).children('a').each(function() {
             $(this).removeClass('SelectedDutrationStake');
         });
@@ -22,32 +23,41 @@ var Stake = React.createClass({
         this.controller.calculateReward(parseInt(e.currentTarget.dataset.tier));
     },
     changeSecond(e) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         var split = e.currentTarget.value.split("_");
         this.logo.src = "assets/img/" + split[1] + "-logo.png";
         this.controller.calculateOther("firstAmount", parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
         this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
     max(e) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         this.controller.max(e.currentTarget.dataset.target, parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
     },
-    componentDidMount() {
-        this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
-    },
     onChangeAmount(e) {
-        this.controller.calculateOther(e.currentTarget.dataset.target, parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
-        e.currentTarget.dataset.target === "firstAmount" && this.controller.calculateReward(parseInt(this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier));
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
+        var _this = this;
+        var currentTarget = e.currentTarget;
+        _this.changeTimeout && clearTimeout(_this.changeTimeout);
+        _this.changeTimeout = setTimeout(function() {
+            _this.controller.calculateOther(currentTarget.dataset.target, parseInt(_this.pool.value.split('_')[0]), _this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
+        }, window.context.inputChangeTimeout || 300);
     },
     approve(e) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         if(!$(e.currentTarget).hasClass('active')) {
             return;
         }
         this.controller.approve(e.currentTarget.dataset.target);
     },
     stake(e) {
+        e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         if(!$(e.currentTarget).hasClass('active')) {
             return;
         }
         this.controller.stake(parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
+    },
+    componentDidMount() {
+        window.walletAddress && this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
     render() {
         var _this = this;
