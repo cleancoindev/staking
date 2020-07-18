@@ -68,12 +68,12 @@ var Stake = React.createClass({
                     <p>buidl Staking works using Uniswap V2, buidled by the uniswap team. Before considering to stake your buidl, we kindly recomend you to read carefully about how Uniswap Liquidity works and every prices risks connected with the uniswap Liquidity Providers rules <a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a>. Do it at your own risk!</p>
                 </section>
             </section>
-            <section className="boxAYORT">
+            {this.state && this.state.staked && <section className="boxAYORT">
                 <section className="boxAYORTTEXT">
                     <h2>&#127881; &#129385; Staked! &#129385; &#127881;</h2>
-                    <p>You have succesfully staked <b>3000</b> buidl for <b>1 year!</b> Check the <a href="javascript:;">Status</a> page to manage your Staking Position. </p>
+                    <p>You have succesfully staked <b>{this.state.staked.amount}</b> buidl for <b>{this.state.staked.period}!</b> Check the <a href="javascript:;" onClick={() => this.emit('view/change', 'Status')}>Status</a> page to manage your Staking Position. </p>
                 </section>
-            </section>
+            </section>}
             <section className="switchBox">
                 <h3>&#129412; + &#9203; + &#129385; = &#127873;</h3>
                 <section className="switchTools">

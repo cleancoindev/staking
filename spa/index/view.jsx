@@ -11,6 +11,12 @@ var Index = React.createClass({
             element: "Info"
         };
     },
+    getDefaultSubscriptions() {
+        return {
+            'ethereum/ping' : this.controller.updateWalletInfo,
+            'view/change' : this.changeView
+        }
+    },
     onClick(e) {
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         this.changeView(e.currentTarget.innerHTML);
@@ -31,6 +37,9 @@ var Index = React.createClass({
             }
         });
     },
+    componentDidMount() {
+        this.controller.updateWalletInfo();
+    },
     render() {
         var props = {};
         this.state && Object.entries(this.state).forEach(data => props[data[0]] = data[1]);
@@ -49,7 +58,7 @@ var Index = React.createClass({
                         <a href="https://github.com/b-u-i-d-l/staking" target="_Blank">#github</a>
                         <a href={window.getNetworkElement("etherscanURL") + "address/" + window.getNetworkElement("stakeAddress")} target="_blank">#etherscan</a>
                     </section>
-                    <section className="WalletInfoBoxAll">
+                    {this.state && this.state.walletData && <section className="WalletInfoBoxAll">
                         <section className="WalletInfoBox">
                             <section className="WalletInfoBoxTitle">
                                 <img src=""></img>
@@ -67,8 +76,12 @@ var Index = React.createClass({
                                 <img></img>
                                 <p></p>
                             </section>
+                            {Object.keys(this.state.walletData).map(key => <section key={key} className="WalletInfoBoxBalances">
+                                <img src={"assets/img/" + key + "-logo.png"}/>
+                                <p>{this.state.walletData[key]}</p>
+                            </section>)}
                         </section>
-                    </section>
+                    </section>}
                     </section>
                 </header>
                 <section className="PagerMenu">

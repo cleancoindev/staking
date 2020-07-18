@@ -93,6 +93,7 @@ var StakeController = function (view) {
     };
 
     context.stake = async function stake(pool, tier) {
+        context.view.setState({staked: null});
         var firstAmount = window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18);
         var stakingInfo = await window.blockchainCall(window.stake.methods.getStakingInfo, tier);
         var buidlBalance = await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress);
@@ -118,6 +119,10 @@ var StakeController = function (view) {
         var value = pool === 0 ? '0' : secondAmount;
         try {
             await window.blockchainCall(eth, window.stake.methods.stake, tier, pool + '', firstAmount, firstAmountMin, value, secondAmountMin);
+            context.view.setState({staked: {
+                amount : context.view.firstAmount.value,
+                period : tier === '0' ? "3 months" : tier === '1' ? "6 months" : tier === '2' ? "9 months" : "1 year"
+            }});
         } catch(e) {
             alert(e.message || e);
         }
