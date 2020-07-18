@@ -16,7 +16,7 @@ var Status = React.createClass({
                 {(!this.state || this.state.loadingPosition) && <Loader/>}
                 {(!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.map(it => <section className="statusYou">
                     <section className="statusPosition">
-                        <h3>{window.fromDecimals(it.poolAmount, 18)}</h3>
+                        <h3>{it.poolAmountFromDecimals}</h3>
                         <h6 className="statusUni">&#129412; <a href="">Uniswap-V2</a></h6>
                         <h6><b>{it.poolPosition === '0' ? "ETH" : "USDC"}-buidl</b></h6>
                     </section>
