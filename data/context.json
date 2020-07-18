@@ -13,6 +13,7 @@
     "buidlTokenAddressRopsten" : "0x5873Fae0Eb15C27C5724ddd10651e8E3901C89F2",
     "usdcTokenAddress": "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
     "usdcTokenAddressRopsten": "0x20DBF9DeE96af24C5312049Eb89647a8f3Cc4F85",
+    "infuraNode" : "https://mainnet.infura.io/v3/5e302428cc5e41a188dc717dc6f34a5b",
     "blockSearchSection" : 9000000,
     "defaultCharsAmount" : 90,
     "transactionConfirmations": 0,
