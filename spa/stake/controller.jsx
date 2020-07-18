@@ -40,9 +40,9 @@ var StakeController = function (view) {
         var reserves = await context.calculateReserves((await context.getSecondTokenData(i, true)).token, i);
         var value = reserves[target === 'firstAmount' ? 'secondPerBuidl' : 'buidlPerSecond'].multiply(window.toDecimals(context.view[target].value.split(',').join('') || '0', i === 1 ? 6 : 18));
         value = new UniswapFraction(value.toSignificant(100).split('.')[0]);
-        context.view[target === 'firstAmount' ? 'secondAmount' : 'firstAmount'].value = value.divide(10 ** (target === 'firstAmount' && i == 1 ? 6 : 18)).toSignificant(6);
+        var otherVal = value.divide(10 ** (target === 'firstAmount' && i == 1 ? 6 : 18)).toSignificant(6);
+        context.view[target === 'firstAmount' ? 'secondAmount' : 'firstAmount'].value = window.formatMoney(otherVal, otherVal.split('.')[1] && otherVal.split('.')[1].length);
         target === "firstAmount" && context.calculateReward(tier);
-        console.log(value.toSignificant(100));
         return value;
     };
 
@@ -93,20 +93,27 @@ var StakeController = function (view) {
     };
 
     context.stake = async function stake(pool, tier) {
-        var firstAmount = parseInt(window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18));
+        var firstAmount = window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18);
         var stakingInfo = await window.blockchainCall(window.stake.methods.getStakingInfo, tier);
-        if(firstAmount < parseInt(stakingInfo[0])) {
+        var buidlBalance = await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress);
+        if(parseInt(firstAmount) < parseInt(stakingInfo[0])) {
             return alert("Amount to stake is less than the current min cap");
         }
-        if(firstAmount > parseInt(stakingInfo[2])) {
+        if(parseInt(firstAmount) > parseInt(stakingInfo[2])) {
             return alert("Amount to stake must be less than the current remaining one");
         }
-        firstAmount = new UniswapFraction(window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18), 1);
+        if(parseInt(firstAmount) > parseInt(buidlBalance)) {
+            return alert("You don't have enough buidl balance to stake!");
+        }
+        firstAmount = new UniswapFraction(firstAmount, 1);
         var secondAmount = await context.calculateOther('firstAmount', pool, tier);
         var firstAmountMin = firstAmount.subtract(firstAmount.multiply(context.slippage)).toSignificant(100).split('.')[0];
         var secondAmountMin = secondAmount.subtract(secondAmount.multiply(context.slippage)).toSignificant(100).split('.')[0];
         firstAmount = firstAmount.toSignificant(100).split('.')[0];
         secondAmount = secondAmount.toSignificant(100).split('.')[0];
+        if(parseInt(secondAmount) > (await context.getSecondTokenData(pool)).balance) {
+            return alert("You don't have enough " + (pool === 0 ? "eth" : "usdc") + " balance to stake!");
+        }
         var eth = pool === 0 ? secondAmount : undefined;
         var value = pool === 0 ? '0' : secondAmount;
         try {
