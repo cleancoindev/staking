@@ -44,11 +44,31 @@ var Index = React.createClass({
                 <header className="Head">
                     <section className="HBrand">
                         <h6><img src="/assets/img/buidl-logo.png"></img> &#129412; Liquidity Stake</h6>
-                    </section>
                     <section className="HActions">
                         <a href="https://dfohub.com" target="_Blank">#dfohub</a>
                         <a href="https://github.com/b-u-i-d-l/staking" target="_Blank">#github</a>
                         <a href={window.getNetworkElement("etherscanURL") + "address/" + window.getNetworkElement("stakeAddress")} target="_blank">#etherscan</a>
+                    </section>
+                    <section className="WalletInfoBoxAll">
+                        <section className="WalletInfoBox">
+                            <section className="WalletInfoBoxTitle">
+                                <h2>0x3453428057</h2>
+                                <img src=""></img>
+                            </section>
+                            <section className="WalletInfoBoxBalances">
+                                <img></img>
+                                <p></p>
+                            </section>
+                            <section className="WalletInfoBoxBalances">
+                                <img></img>
+                                <p></p>
+                            </section>
+                            <section className="WalletInfoBoxBalances">
+                                <img></img>
+                                <p></p>
+                            </section>
+                        </section>
+                    </section>
                     </section>
                 </header>
                 <section className="PagerMenu">
