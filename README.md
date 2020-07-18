@@ -2,10 +2,10 @@
 
 <img src="/assets/img/syb.gif">
 
-On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n 10497000) the buidl Staking contract will start working! 
-The Staking Contract (0x9085F272D2F348a48Be31D6e66D221463677F6c7) is already deployed. 
+On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n [10497000](https://etherscan.io/block/countdown/10497000) the buidl Staking contract will start working! 
+The Staking Contract (0xb81ddc1bcb11fc722d6f362f4357787e6f958ce0) is already deployed. 
 
-Etherscan: https://etherscan.io/address/0x9085f272d2f348a48be31d6e66d221463677f6c7
+Etherscan: https://etherscan.io/address/0xb81ddc1bcb11fc722d6f362f4357787e6f958ce0
 
 ## How it Works:
 
