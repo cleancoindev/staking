@@ -7,14 +7,16 @@ var Status = React.createClass({
         'spa/stakingInfo'
     ],
     componentDidMount() {
-        this.controller.load();
+        window.walletAddress && this.controller.load();
     },
     render() {
+        var _this = this;
         return (<section>
             <section className="statusBox">
                 <h2>Your Positions</h2>
-                {(!this.state || this.state.loadingPosition) && <Loader/>}
-                {(!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.map(it => <section className="statusYou">
+                {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping')).then(_this.controller.load)} className="switchAction active">Connect your Wallet</a>}
+                {window.walletAddress && (!this.state || this.state.loadingPosition) && <Loader/>}
+                {window.walletAddress && (!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.map(it => <section className="statusYou">
                     <section className="statusPosition">
                         <h3>{it.poolAmountFromDecimals}</h3>
                         <h6 className="statusUni">&#129412; <a href="">Uniswap-V2</a></h6>
