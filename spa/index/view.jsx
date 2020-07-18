@@ -61,20 +61,8 @@ var Index = React.createClass({
                     {this.state && this.state.walletData && <section className="WalletInfoBoxAll">
                         <section className="WalletInfoBox">
                             <section className="WalletInfoBoxTitle">
-                                <img src=""></img>
-                                <h2>0x3453428057..</h2>
-                            </section>
-                            <section className="WalletInfoBoxBalances">
-                                <img></img>
-                                <p></p>
-                            </section>
-                            <section className="WalletInfoBoxBalances">
-                                <img></img>
-                                <p></p>
-                            </section>
-                            <section className="WalletInfoBoxBalances">
-                                <img></img>
-                                <p></p>
+                                <img src={window.makeBlockie(window.walletAddress)}></img>
+                                <h2><a href={window.getNetworkElement('etherscanURL') + 'address/' + window.walletAddress} target="_blank">{window.shortenWord(window.walletAddress, 15)}</a></h2>
                             </section>
                             {Object.keys(this.state.walletData).map(key => <section key={key} className="WalletInfoBoxBalances">
                                 <img src={"assets/img/" + key + "-logo.png"}/>
