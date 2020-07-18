@@ -52,8 +52,8 @@ var Index = React.createClass({
                     <section className="WalletInfoBoxAll">
                         <section className="WalletInfoBox">
                             <section className="WalletInfoBoxTitle">
-                                <h2>0x3453428057</h2>
                                 <img src=""></img>
+                                <h2>0x3453428057..</h2>
                             </section>
                             <section className="WalletInfoBoxBalances">
                                 <img></img>
