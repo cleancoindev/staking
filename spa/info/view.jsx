@@ -13,6 +13,7 @@ var Info = React.createClass({
                     <section className="ExpPar">    
                         <p><b>Disclamer:</b> Before trusting this website, make sure the URL is <a href="https://stake.dfohub.com" target="_blank">https://stake.dfohub.com</a></p>
                     </section>
+                    <h1>&#127873; Reward System</h1>
                     <h2>The reward system is independent from the buidl price!</h2>
                     <section className="ExpPar">    
                         <p>The reward system is calculated based on how much buidl a holder uses to fill a liquidity pool, without any changes or dependency on the ETH or USDC values.</p>
@@ -52,6 +53,11 @@ var Info = React.createClass({
                                 <p><b>Example:</b> If the total reward is 1,000 buidl over three months locking period, this means that the staker can redeem 83 (1,000/12) buidl every week.</p>
                             </section>
                             <section className="ExpPar">    
+                                <p>Weekly earnings can be reedemed once a week or accumulative in less transations as the staker wants by claim the reward using the "Reedem" button.</p>
+                                <p>Stakers can reedem the cumulative remained ammount of Reward even with the "Withdraw" transaction after the staking period.</p>
+                            </section>
+                            <section className="ExpPar">  
+                                <h1>&#9203; Time Estimation</h1>  
                                 <p>Weekly earnings can be reedemed once a week or accumulative in less transations as the staker wants by claim the reward using the "Reedem" button.</p>
                                 <p>Stakers can reedem the cumulative remained ammount of Reward even with the "Withdraw" transaction after the staking period.</p>
                             </section>
