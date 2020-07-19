@@ -65,7 +65,7 @@ var Stake = React.createClass({
             <section className="boxAYOR">
                 <section className="boxAYORTEXT">
                     <h2>&#128680; Disclamer &#128680;</h2>
-                    <p>buidl Staking works using Uniswap V2, buidled by the uniswap team. Before considering to stake your buidl, we kindly recomend you to read carefully about how Uniswap Liquidity works and every prices risks connected with the uniswap Liquidity Providers rules <a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a>. Do it at your own risk!</p>
+                    <p>buidl Staking works using Uniswap V2, built by the Uniswap team. Before you stake your buidl, we kindly recommend you read carefully about how Uniswap Liquidity works and the price risks associated with the Uniswap Liquidity Provider rules. <a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a> Do it at your own risk!</p>
                 </section>
             </section>
             {this.state && this.state.staked && <section className="boxAYORT">
@@ -116,8 +116,8 @@ var Stake = React.createClass({
                     {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>Stake</a>}
                     {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping'))} className="switchAction active">Connect</a>}
                 </section>
-                <p>By Staking $buidl you'll earn from the Uniswap V2 Trading fees + the Staking Reward, redemable after the selected locking period  </p>
-                <p>Disclamer: Staking $buidl is an irreversible action, you'll be able to redeem your locked tokens only after the selected locking period. Do it at your own risk</p>
+                <p>By Staking buidl you'll earn from the Uniswap V2 Trading fees + the Staking Reward. Staking buidl you're adding liquidity to Uniswap V2 and you'll recevie Pool Tokens.</p>
+                <p>Disclamer: Staking buidl is an irreversible action, you'll be able to redeem your locked Uniswap V2 tokens only after the selected locking period. Do it at your own risk</p>
             </section>
         </section>);
     }

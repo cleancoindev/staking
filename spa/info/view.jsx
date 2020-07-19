@@ -147,12 +147,36 @@ var Info = React.createClass({
 
                     <section className="ExpPar">  
                         <h1>&#129385; How to Stake</h1>  
-                        <p>The buidl staking reward is fixed and dependent to the lock tier selected. To don't inflate more than the 30% of the FI V2 removed for the Stake Mechanism (180 buidl/day) and to reach a fixed reward system for stakers, we have added a max cap of simultaneous staking positions opened based on buidl staked:</p>
+                        <p>Before you stake buidl, consider that during the staking process you're actually adding liquidity to Uniswap V2, and so you'll receive back Uniswap V2 Pool tokens at the end of the staking period. What happens in the background is that you're adding liquidity to Uniswap V2 just as you would via the Uniswap GUI, but you're also locking the Uniswap V2 Tokens to receive buidl rewards. We kindly recommend that you read all of the Uniswap Liquidity Providers Documentation before staking, so that you can make an informed decision:</p>
+                        <p><a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a> Keep in mind that staking buidl is an irreversible action. Do it at your own risk!</p>
+                    </section>
+                    <section className="ExpPar">    
+                        <p>To Stake Liquidity, all you have to do is go to the "Stake" Section on stake.dfohub.com and follow these steps:</p>
+                    </section>
+                    <section className="ExpPar">    
+                        <p>#1 Connect you wallet, by clicking the "Connect" button</p>
+                        <p>#2 Choose the quantity of buidl you want to stake</p>
+                        <p>#3 Select between the ETH or the USDC pool, and be sure you have the ammount required</p>
+                        <p>#4 Select the lock duration</p>
+                        <p>#5 If you haven’t already, click the "Approve" button</p>
+                        <p>#6 Wait for the “Approval” transaction to confirm</p>
+                        <p>#7 Start your staking transaction by clicking "Stake"</p>
+                        <p>#8 Wait for the Staking Transaction to confirm...</p>
+                        <p>... <b>Done!</b> You have successfully Staked buidl. Now, you can manage your position in the "Status" page.</p>
                     </section>
 
                     <section className="ExpPar">  
                         <h1>&#129385; How to reedem Staking and Rewards</h1>  
-                        <p>The buidl staking reward is fixed and dependent to the lock tier selected. To don't inflate more than the 30% of the FI V2 removed for the Stake Mechanism (180 buidl/day) and to reach a fixed reward system for stakers, we have added a max cap of simultaneous staking positions opened based on buidl staked:</p>
+                        <p>Once you have successfully created a Staking Position, you can manage it on the "Status" page:</p>
+                    </section>
+                    <section className="ExpPar">
+                        <h2>Weekly Reward Withdraw</h2>  
+                        <p>To Withdraw your weekly Reward from your position, just click the Withdraw Reward button. This button is designed to let you Withdraw all of your available unlocked rewards.</p>
+                    </section>
+                    <section className="ExpPar">
+                        <h2>Position Withdraw</h2>  
+                        <p>At the end of the Staking Period, you can use the "Withdraw Position" button to Withdraw all of your staked Uniswap V2 Pool Tokens, as well as your remaining rewards (if any).</p>
+                        <p>To Withdraw your liquidity using your Uniswap V2 Liquidity Pool Tokens, you just have to go to the <a href="https://app.uniswap.org/#/pool" target="_Blank">Uniswap GUI</a>, select your Liquidity Pool and choose the amount to Withdraw.</p>
                     </section>
                 </section>
             </section>
