@@ -57,7 +57,7 @@ The total yearly buidl redeemable as rewards is 64,800 buidl, divided into:
 
 The buidl staking reward is fixed and dependent on the lock tier selected. To avoid inflating more than the 30% of the FI V2 already set aside for the Staking Mechanism (180 buidl/day), and to ensure a fixed reward system for stakers, we have included a max buidl cap of simultaneous staking positions that can be opened.
 
-<img src="/assets/img/maxcap.png"
+<img src="/assets/img/maxcap.png">
 
 There are no individual staking limitations, and the minimum amount to open a staking position is 200 buidl.
 
