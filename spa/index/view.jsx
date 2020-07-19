@@ -45,11 +45,11 @@ var Index = React.createClass({
         this.state && Object.entries(this.state).forEach(data => props[data[0]] = data[1]);
         return (
             <section className="OnePage">
-                {/*<section className="DisclamerBanner">
+                <section className="DisclamerBanner">
                     <h1>Disclamer</h1>
-                    <p>The Stake Manager will start working at the ETH Block n 10490000</p>
-                    <a href="https://etherscan.io/block/countdown/10490000" target="_Blank">Coountdown</a>
-                </section>*/}
+                    <p>The Liquidity Stake Manager will start working at the ETH Block n 10497000</p>
+                    <a href="https://etherscan.io/block/countdown/10497000" target="_Blank">Coountdown</a>
+                </section>
                 <header className="Head">
                     <section className="HBrand">
                         <h6><img src="/assets/img/buidl-logo.png"></img> &#129412; Liquidity Stake</h6>

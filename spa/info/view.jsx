@@ -6,7 +6,7 @@ var Info = React.createClass({
         return (
             <section>
                 <section className="ExpTop">
-                    <h1>Welcome to the $BUIDL Liquidity Staking Manager</h1>
+                    <h1>Welcome to the buidl Liquidity Staking Manager</h1>
                     <section className="ExpPar">
                         <p>The DFOhub Liquidity Staking Mechanism is designed to reward <a className="FancyUni" href="https://uniswap.info/token/0x7b123f53421b1bf8533339bfbdc7c98aa94163db">Uniswap V2</a> liquidity Providers to lock long-term liquidity in Uniswap V2 <a className="FancyUni" href="https://uniswap.info/pair/0xb0fb35cc576034b01bed6f4d0333b1bd3859615c">buidl-ETH</a> and <a className="FancyUni" href="https://uniswap.info/pair/0x543a59743fe2967553512166f739c965ecd78763">buidl-USDC</a> pools.</p>
                     </section>
