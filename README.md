@@ -25,7 +25,7 @@ Example: if their total reward is 1,000 buidl over a three months locking period
 
 Weekly rewards can be redeemed (withdrawn) once a week, or less often if a staker prefers (in less transactions), by using the "Withdraw Rewards" button. 
 
-At the end of the staking period, Stakers can just withdraw all of their accumulated rewards, along with their staked buidl, using the "Withdraw Position" button(even after the staking period has ended).
+At the end of the staking period, Stakers can withdraw all of their accumulated rewards that they haven't already, along with their staked Liquidity Pool, using the "Withdraw Position" button (even after the staking period has ended).
 
 # Time Estimetion
 
