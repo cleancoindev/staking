@@ -48,7 +48,7 @@ var Index = React.createClass({
                 <section className="DisclamerBanner">
                     <h1>Disclamer</h1>
                     <p>The Liquidity Stake Manager will start working at the ETH Block n 10497000</p>
-                    <a href="https://etherscan.io/block/countdown/10497000" target="_Blank">Coountdown</a>
+                    <a href="https://etherscan.io/block/countdown/10497000" target="_Blank">Countdown</a>
                 </section>
                 <header className="Head">
                     <section className="HBrand">
