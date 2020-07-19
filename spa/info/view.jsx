@@ -146,7 +146,7 @@ var Info = React.createClass({
                     </section>
 
                     <section className="ExpPar">  
-                        <h1>&#129385; How to Stake</h1>  
+                        <h1>&#9193; How to Stake</h1>  
                         <p>Before you stake buidl, consider that during the staking process you're actually adding liquidity to Uniswap V2, and so you'll receive back Uniswap V2 Pool tokens at the end of the staking period. What happens in the background is that you're adding liquidity to Uniswap V2 just as you would via the Uniswap GUI, but you're also locking the Uniswap V2 Tokens to receive buidl rewards. We kindly recommend that you read all of the Uniswap Liquidity Providers Documentation before staking, so that you can make an informed decision:</p>
                         <p><a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a> | <a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a> | <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a> Keep in mind that staking buidl is an irreversible action. Do it at your own risk!</p>
                     </section>
@@ -166,7 +166,7 @@ var Info = React.createClass({
                     </section>
 
                     <section className="ExpPar">  
-                        <h1>&#129385; How to reedem Staking and Rewards</h1>  
+                        <h1>&#128176; How to reedem Staking and Rewards</h1>  
                         <p>Once you have successfully created a Staking Position, you can manage it on the "Status" page:</p>
                     </section>
                     <section className="ExpPar">
