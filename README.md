@@ -25,7 +25,7 @@ Example: if their total reward is 1,000 buidl over a three months locking period
 
 Weekly rewards can be redeemed (withdrawn) once a week, or less often if a staker prefers (in less transactions), by using the "Withdraw Rewards" button. 
 
-At the end of the staking period, Stakers can withdraw all of their accumulated rewards that they haven't already, along with their staked Liquidity Pool, using the "Withdraw Position" button (even after the staking period has ended).
+At the end of the Staking period, along with their staked buidl, the staker will be able to withdraw all of their remaining rewards (i.e, those not already withdrawn) via the stake.dfohub.com GUI, in the form of Uniswap V2 liquidity pool tokens. Then, the staker can either leave these tokens in the Uniswap V2 liquidity pool (and continue to receive Uniswap trading fees), or unlock them, converting them into buidl & eth / usdc, which they can then withdraw (along with the Uniswap trading fees they earned during the staking period) to their own personal wallet.
 
 # Time Estimation
 
@@ -60,8 +60,6 @@ The buidl staking reward is fixed and dependent on the lock tier selected. To av
 <img src="/assets/img/maxcap.png">
 
 There are no individual staking limitations, and the minimum amount to open a staking position is 200 buidl.
-
-At the end of the Staking period, along with their staked buidl, the staker will be able to withdraw all of their remaining rewards (i.e, those not already withdrawn) via the stake.dfohub.com GUI, in the form of Uniswap V2 liquidity pool tokens. Then, the staker can either leave these tokens in the Uniswap V2 liquidity pool (and continue to receive Uniswap trading fees), or unlock them, converting them into buidl & eth / usdc, which they can then withdraw (along with the Uniswap trading fees they earned during the staking period) to their own personal wallet.
 
 # Uniswap Integration
 
