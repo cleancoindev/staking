@@ -5,63 +5,73 @@
 On Monday Jul 20 2020, at ~5pm CEST (Ethereum Block n. <a href="https://etherscan.io/block/countdown/10497000" target="_Blank">10497000</a> the buidl Staking contract will start working! 
 The Staking Contract <a href="https://etherscan.io/address/0xb81ddc1bcb11fc722d6f362f4357787e6f958ce0" target="_Blank">0xb81ddc1bcb11fc722d6f362f4357787e6f958ce0</a> is already deployed. 
 
-## How it Works:
+The DFOhub Liquidity Staking Mechanism is designed to reward liquidity providers to lock long-term liquidity in Uniswap V2 buidl-ETH and buidl-USDC pools.
 
-The DFOhub Liquidity Staking Mechanism is designed to reward Uniswap V2 liquidity Providers (buidl-ETH and buidl-USDC exchanges) to lock long-therm liquidity.
+# Reward System
 
-The reward amount is fixed, and depends on the locking period selected. The reward system is independent from the buidl price. It's calculated based on how much buidl a holder uses to fill a liquidity pool, without any changes or dependency on the ETH or USDC values.
+### The reward system is independent from the buidl price!
 
-### The total reward of the staking position is divided and redeemable once a week.
+Rewards are calculated based on how much buidl a holder provides to a liquidity pool, without any change in or dependency on the ETH or USDC values.
 
-Example: if the total reward is 10 buidl over three months locking period, this means that the staker can redeem 0.83 (10/12) buidl every week.
+The reward amount is fixed, and depends on the locking period selected:
 
-### The minimum amount of buidl to open a liquidity staking position is 200 buidl.
+<img src="/assets/img/stperch.png">
 
-The Reward is calculated based on four Lock tiers:
+## The total reward of the staking position is divided and redeemable once a week!
 
-## Three Months (5% Reward)
+Every week (47,625 Ethereum Blocks), stakers can redeem their portion of the total rewards accumulated during the staking period. 
 
-Every buidl Staked for a three months locking period is equal to a reward of 0.05 buidl (0.004 buidl weekly).
+Example: if their total reward is 1,000 buidl over a three months locking period, they can redeem 83 (1,000/12) buidl every week.
 
-Example: 10,000 buidl staked will earn as a total reward 500 buidl  (40 buidl weekly)
+Weekly rewards can be redeemed (withdrawn) once a week, or less often if a staker prefers (in less transactions), by using the "Withdraw Rewards" button. 
 
-## Six Months (20% Reward)
+At the end of the staking period, Stakers can just withdraw all of their accumulated rewards, along with their staked buidl, using the "Withdraw Position" button(even after the staking period has ended).
 
-Every buidl Staked for a six months locking period is equal to a reward of 0.2 buidl (0.008 buidl weekly).
+# Time Estimetion
 
-Example: 10,000 buidl staked will earn as a total reward 2,000 buidl (80 buidl weekly)
+For this staking Smart Contract, time is estimated by:
 
-## Nine Months (30% Reward)
+1 day: 6,350 Ethereum Blocks
 
-Every buidl Staked for a nine months locking period is equal to a reward of 0.3 buidl (0.0082 buidl weekly).
+1 month: 190,500 Ethereum Blocks (6,350 * 30)
 
-Example: 10,000 buidl staked will earn as a total reward 3,000 buidl (80 buidl weekly)
+1 Week: 47,625 Ethereum Blocks (190,500 / 4)
 
-## One Year (50% Reward)
+3 Months: 571,500 Ethereum Blocks (190,500 * 3)
 
-Every buidl Staked for a yearly locking period is equal to a reward of 0.5 buidl (0.01 buidl weekly).
+6 Months: 1,143,000 Ethereum Blocks (190,500 * 6)
 
-Example: 10,000 buidl staked will earn as a total reward 5000 buidl (100 buidl weekly)
+9 Months: 1,714,500 Ethereum Blocks (190,500 * 9)
 
-# Redeem
+1 Year: 2,286,000 Ethereum Blocks (190,500 * 12)
 
-At the end of the staking period, the staker can redeem the related Uniswap V2 token (Liquidity + Uniswap Trading Fees) and the reward (if not already redeemed).
+# buidl Inflation
 
-# Inflation
+The buidl used to pay stakers is the 30% already accounted for by the <a href="https://github.com/b-u-i-d-l/fair-inflation-v2">Fair inflation V2 strategy</a>. This means that in terms of inflation, regardless of whether  buidl holders stake their buidl or not, the inflation of buidl can't be more than that outlined in the FI V2 White Paper.
 
-The staking mechanism is already accounted for by the Fair Inflation V2 (FI V2) of DFOhub, reduced by 30% during the last week update to pay the Staking Rewards.
+The total yearly buidl redeemable as rewards is 64,800 buidl, divided into:
 
-In order to not exceed the 30% of the FI V2, every Lock Tier has a limited number of buidl that can be simultaneously staked:
+<img src="/assets/img/maxreward.png">
 
-### Three Months: 16,200 Max buidl staked at the same time.
+# Staking Rules
 
-### Six Months: 16,200 Max buidl staked at the same time.
+The buidl staking reward is fixed and dependent on the lock tier selected. To avoid inflating more than the 30% of the FI V2 already set aside for the Staking Mechanism (180 buidl/day), and to ensure a fixed reward system for stakers, we have included a max buidl cap of simultaneous staking positions that can be opened.
 
-### Nine Months: 58,320 Max buidl staked at the same time.
+<img src="/assets/img/maxcap.png"
 
-### One Year: 63,504 Max buidl staked at the same time.
+There are no individual staking limitations, and the minimum amount to open a staking position is 200 buidl.
 
-<img src="/assets/img/liquidity-staking.png">
+At the end of the Staking period, along with their staked buidl, the staker will be able to withdraw all of their remaining rewards (i.e, those not already withdrawn) via the stake.dfohub.com GUI, in the form of Uniswap V2 liquidity pool tokens. Then, the staker can either leave these tokens in the Uniswap V2 liquidity pool (and continue to receive Uniswap trading fees), or unlock them, converting them into buidl & eth / usdc, which they can then withdraw (along with the Uniswap trading fees they earned during the staking period) to their own personal wallet.
+
+# Uniswap Integration
+
+buidl Staking works using Uniswap V2, built by the Uniswap team. Before you  stake your buidl, we kindly recommend you read carefully about how Uniswap Liquidity works and the price risks associated with the Uniswap Liquidity Provider rules. 
+
+<a href="https://docs.ethhub.io/guides/graphical-guide-for-understanding-uniswap/" target="_Blank">Ethhub Uniswap Guide</a>
+
+<a href="https://uniswap.org/docs/v2/advanced-topics/understanding-returns/" target="_Blank">Uniswap Returns Guide</a>
+
+<a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a>
 
 # GUI
 
