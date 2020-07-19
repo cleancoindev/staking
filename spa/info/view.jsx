@@ -99,7 +99,7 @@ var Info = React.createClass({
                                 <p>6 Months tier total reward</p>
                             </section>
                             <section className="ExpParBox">
-                                <h6>17,496 buidl</h6>
+                                <h6>23,328 buidl</h6>
                                 <p>9 Months tier total reward</p>
                             </section>
                             <section className="ExpParBox">
