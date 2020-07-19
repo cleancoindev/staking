@@ -27,7 +27,7 @@ Weekly rewards can be redeemed (withdrawn) once a week, or less often if a stake
 
 At the end of the staking period, Stakers can withdraw all of their accumulated rewards that they haven't already, along with their staked Liquidity Pool, using the "Withdraw Position" button (even after the staking period has ended).
 
-# Time Estimetion
+# Time Estimation
 
 For this staking Smart Contract, time is estimated by:
 
