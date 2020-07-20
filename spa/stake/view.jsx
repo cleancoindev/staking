@@ -44,14 +44,16 @@ var Stake = React.createClass({
     },
     approve(e) {
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
-        if(!$(e.currentTarget).hasClass('active')) {
+        if(!$(e.currentTarget).hasClass('active') || this.state.loadingStake || this.state.loadingApprove) {
+            console.log('exit');
             return;
         }
         this.controller.approve(e.currentTarget.dataset.target);
     },
     stake(e) {
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
-        if(!$(e.currentTarget).hasClass('active')) {
+        if(!$(e.currentTarget).hasClass('active') || this.state.loadingStake || this.state.loadingApprove) {
+            console.log('exit');
             return;
         }
         this.controller.stake(parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
@@ -111,9 +113,9 @@ var Stake = React.createClass({
                     <img src="/assets/img/buidl-logo.png"></img>
                 </section>
                 <section className="switchActions">
-                    {window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="buidl" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>Approve buidl</a>}
-                    {window.walletAddress && !this.state.approveFirst && this.state.approveSecond && <a data-target="usdc" href="javascript:;" className="switchAction active" onClick={this.approve}>Approve usdc</a>}
-                    {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>Stake</a>}
+                    {false && window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="buidl" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve buidl"}</a>}
+                    {window.walletAddress && /*!this.state.approveFirst && this.state.approveSecond &&*/ <a data-target="usdc" href="javascript:;" className="switchAction active" onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve usdc"}</a>}
+                    {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>{this.state.loadingStake && <Loader/>}{!this.state.loadingStake && "Stake"}</a>}
                     {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping'))} className="switchAction active">Connect</a>}
                 </section>
                 <p>By Staking buidl you'll earn from the Uniswap V2 Trading fees + the Staking Reward. Staking buidl you're adding liquidity to Uniswap V2 and you'll recevie Pool Tokens.</p>

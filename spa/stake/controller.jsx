@@ -18,9 +18,14 @@ var StakeController = function (view) {
     };
 
     context.approve = async function approve(target) {
-        var token = window[target + 'Token'];
-        await window.blockchainCall(token.methods.approve, window.stake.options.address, await window.blockchainCall(token.methods.totalSupply));
-        context.calculateApprove(parseInt(context.view.pool.value.split('_')[0]));
+        context.view.setState({loadingStake : false, loadingApprove: true});
+        try {
+            var token = window[target + 'Token'];
+            await window.blockchainCall(token.methods.approve, window.stake.options.address, await window.blockchainCall(token.methods.totalSupply));
+            context.calculateApprove(parseInt(context.view.pool.value.split('_')[0]));
+        } catch(e) {
+        }
+        context.view.setState({loadingStake : false, loadingApprove: false});
     };
 
     context.max = async function max(target, i, tier) {
@@ -93,7 +98,6 @@ var StakeController = function (view) {
     };
 
     context.stake = async function stake(pool, tier) {
-        context.view.setState({staked: null});
         var firstAmount = window.toDecimals(context.view.firstAmount.value.split(',').join(''), 18);
         var stakingInfo = await window.blockchainCall(window.stake.methods.getStakingInfo, tier);
         var buidlBalance = await window.blockchainCall(window.buidlToken.methods.balanceOf, window.walletAddress);
@@ -106,6 +110,7 @@ var StakeController = function (view) {
         if(parseInt(firstAmount) > parseInt(buidlBalance)) {
             return alert("You don't have enough buidl balance to stake!");
         }
+        context.view.setState({staked: null, loadingStake : true, loadingApprove: false});
         firstAmount = new UniswapFraction(firstAmount, 1);
         var secondAmount = await context.calculateOther('firstAmount', pool, tier);
         var firstAmountMin = firstAmount.subtract(firstAmount.multiply(context.slippage)).toSignificant(100).split('.')[0];
@@ -113,6 +118,7 @@ var StakeController = function (view) {
         firstAmount = firstAmount.toSignificant(100).split('.')[0];
         secondAmount = secondAmount.toSignificant(100).split('.')[0];
         if(parseInt(secondAmount) > (await context.getSecondTokenData(pool)).balance) {
+            context.view.setState({loadingStake : false, loadingApprove: false});
             return alert("You don't have enough " + (pool === 0 ? "eth" : "usdc") + " balance to stake!");
         }
         var eth = pool === 0 ? secondAmount : undefined;
@@ -125,7 +131,8 @@ var StakeController = function (view) {
             }});
             context.view.emit('ethereum/ping');
         } catch(e) {
-            alert(e.message || e);
+            (e.message || e).toLowerCase().indexOf('user denied') === -1 && alert(e.message || e);
         }
+        context.view.setState({loadingStake : false, loadingApprove: false});
     };
 };
