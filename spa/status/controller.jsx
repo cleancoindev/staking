@@ -26,6 +26,7 @@ var StatusController = function (view) {
                     splittedReward : rawStakingInfoData[8],
                     cumulativeReward : '0'
                 };
+                stakingInfo.poolAddress = await window.blockchainCall(window.uniswapV2Factory.methods.getPair, window.buidlToken.options.address, (parseInt(stakingInfo.poolPosition) === 0 ? window.wethToken : window.usdcToken).options.address);
                 stakingInfo.poolAmountFromDecimals = new UniswapFraction(stakingInfo.poolAmount, 1).divide(10 ** 18).toSignificant(6);
                 stakingInfo.canWithdraw = currentBlock >= parseInt(stakingInfo.endBlock);
                 for(var blockTime of stakingInfo.partialRewardBlockTimes) {

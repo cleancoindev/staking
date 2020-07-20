@@ -123,6 +123,7 @@ var StakeController = function (view) {
                 amount : context.view.firstAmount.value,
                 period : tier === '0' ? "3 months" : tier === '1' ? "6 months" : tier === '2' ? "9 months" : "1 year"
             }});
+            context.view.emit('ethereum/ping');
         } catch(e) {
             alert(e.message || e);
         }

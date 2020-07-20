@@ -19,7 +19,7 @@ var Status = React.createClass({
                 {window.walletAddress && (!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.map(it => <section className="statusYou">
                     <section className="statusPosition">
                         <h3>{it.poolAmountFromDecimals}</h3>
-                        <h6 className="statusUni">&#129412; <a href="">Uniswap-V2</a></h6>
+                        <h6 className="statusUni">&#129412; <a href={window.getNetworkElement("etherscanURL") + "token/" + it.poolAddress} target="_blank">Uniswap-V2</a></h6>
                         <h6><b>{it.poolPosition === '0' ? "ETH" : "USDC"}-buidl</b></h6>
                     </section>
                     <section className="statusPosition">
