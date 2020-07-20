@@ -113,8 +113,8 @@ var Stake = React.createClass({
                     <img src="/assets/img/buidl-logo.png"></img>
                 </section>
                 <section className="switchActions">
-                    {false && window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="buidl" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve buidl"}</a>}
-                    {window.walletAddress && /*!this.state.approveFirst && this.state.approveSecond &&*/ <a data-target="usdc" href="javascript:;" className="switchAction active" onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve usdc"}</a>}
+                    {window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="buidl" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve buidl"}</a>}
+                    {window.walletAddress && !this.state.approveFirst && this.state.approveSecond && <a data-target="usdc" href="javascript:;" className="switchAction active" onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve usdc"}</a>}
                     {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>{this.state.loadingStake && <Loader/>}{!this.state.loadingStake && "Stake"}</a>}
                     {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping'))} className="switchAction active">Connect</a>}
                 </section>
