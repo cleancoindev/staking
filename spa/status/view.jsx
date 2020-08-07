@@ -7,15 +7,25 @@ var Status = React.createClass({
         'spa/stakingInfo'
     ],
     componentDidMount() {
-        window.walletAddress && this.controller.load();
+        this.load();
+    },
+    componentDidUpdate() {
+        this.load();
+    },
+    load() {
+        window.walletAddress && !this.alreadyDone && this.controller.load();
+        this.alreadyDone = true;
     },
     render() {
+        if(!this.props.stakingData) {
+            return (<Loader/>);
+        }
         var _this = this;
         return (<section>
             <section className="statusBox">
                 <h2>Your Positions</h2>
                 {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping')).then(_this.controller.load)} className="switchAction active">Connect your Wallet</a>}
-                {window.walletAddress && (!this.state || this.state.loadingPosition) && <Loader/>}
+                {window.walletAddress && (!this.state || this.state.loadingPosition) && <Loader />}
                 {window.walletAddress && (!this.state || !this.state.loadingPosition) && this.state && this.state.stakingPositions && this.state.stakingPositions.map(it => <section className="statusYou">
                     <section className="statusPosition">
                         <h3>{it.poolAmountFromDecimals}</h3>
@@ -41,10 +51,7 @@ var Status = React.createClass({
             <section className="statusBox">
                 <h2>&#129385; Status:</h2>
                 <section className="statusAll">
-                    <StakingInfo tier="0" title="3 Months"/>
-                    <StakingInfo tier="1" title="6 Months"/>
-                    <StakingInfo tier="2" title="9 Months"/>
-                    <StakingInfo tier="3" title="1 Year"/>
+                    {this.props.stakingData.tiers.map((it, i) => <StakingInfo tier={i} title={it.tierKey} stake={_this.props.stakingData.stakingManager} element={_this.props.element} />)}
                 </section>
             </section>
         </section>);

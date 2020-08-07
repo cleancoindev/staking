@@ -25,7 +25,7 @@ var Stake = React.createClass({
     changeSecond(e) {
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         var split = e.currentTarget.value.split("_");
-        this.logo.src = "assets/img/" + split[1] + "-logo.png";
+        this.logo.src = this.props.stakingData.pairs[split[0]].logo
         this.controller.calculateOther("firstAmount", parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
         this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
     },
@@ -58,10 +58,24 @@ var Stake = React.createClass({
         }
         this.controller.stake(parseInt(this.pool.value.split('_')[0]), this.domRoot.children().find('.TimetoStake.SelectedDutrationStake')[0].dataset.tier);
     },
-    componentDidMount() {
-        window.walletAddress && this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
+    onPool(ref) {
+        this.pool = ref;
+        if(!ref) {
+            return;
+        }
+        this.controller.calculateApprove(parseInt(this.pool.value.split('_')[0]));
+    },
+    firstTier(section) {
+        $(section).children('.SelectedDutrationStake').length === 0 && $($(section).children()[0]).addClass('SelectedDutrationStake');
+    },
+    getTierKey(position) {
+        var tier = this.props.stakingData.tiers[position];
+        return tier.tierKey === 'Custom' ? `${tier.blockNumber} blocks` : tier.tierKey;
     },
     render() {
+        if(!this.props.stakingData) {
+            return (<Loader/>);
+        }
         var _this = this;
         return (<section>
             <section className="boxAYOR">
@@ -87,39 +101,35 @@ var Stake = React.createClass({
                 <section className="switchTools switchTools2">
                     {false && <a data-target="secondAmount" href="javascript:;" className="switchAll" onClick={this.max}>Max</a>}
                     <input className="ETHUSDBLOW" ref={ref => this.secondAmount = ref} type="text" placeholder="0.0" spellcheck="false" autocomplete="off" autocorrect="off" inputmode="decimal" pattern="^[0-9][.,]?[0-9]$" data-target="secondAmount" onChange={this.onChangeAmount} disabled/>
-                    <select ref={ref => this.pool = ref} className="switchLink" target="_blank" onChange={this.changeSecond}>
-                        <option value="0_eth" selected>eth</option>
-                        <option value="1_usdc">usdc</option>
+                    <select ref={this.onPool} className="switchLink" target="_blank" onChange={this.changeSecond}>
+                        {this.props.stakingData.pairs.map((it, i) => <option key={it.address} data-index={i} value={i + "_" + it.symbol}>{it.symbol}</option>)}
                     </select>
-                    <img ref={ref => this.logo = ref} src="assets/img/eth-logo.png"/>
+                    <img ref={ref => this.logo = ref} src={this.props.stakingData.pairs[0].logo}/>
                 </section>
                 <h3>&#9203; Duration</h3>
-                <section className="switchTools">
-                    <a data-tier="0" className="TimetoStake" href="javascript:;" onClick={this.onTier}>3 Month</a>
-                    <a data-tier="1" className="TimetoStake SelectedDutrationStake" href="javascript:;" onClick={this.onTier}>6 Months</a>
-                    <a data-tier="2" className="TimetoStake" href="javascript:;" onClick={this.onTier}>9 Months</a>
-                    <a data-tier="3" className="TimetoStake" href="javascript:;" onClick={this.onTier}>1 Year</a>
+                <section className="switchTools" ref={this.firstTier}>
+                    {this.props.stakingData.tiers.map((it, i) => <a key={it.tierKey} data-tier={i} className="TimetoStake" href="javascript:;" onClick={this.onTier}>{it.tierKey !== 'Custom' ? it.tierKey : `For ${it.blockNumber} blocks`}</a>)}
                 </section>
                 <h3>&#127873; Total Reward</h3>
                 <section className="switchTools">
-                    <span ref={ref => this.reward = ref} className="switchFinal">0</span>
-                    <aside className="switchLink" >buidl</aside>
-                    <img src="/assets/img/buidl-logo.png"></img>
+                    <span ref={ref => this.reward = ref} className="switchFinal">{window.formatMoney(0)}</span>
+                    <aside className="switchLink">{window.token.symbol}</aside>
+                    <img src={window.token.logo}/>
                 </section>
                 <h3 className="switchWeek">Weekly</h3>
                 <section className="switchTools switchToolsWeek">
-                    <span ref={ref => this.splittedReward = ref} className="switchFinal">0</span>
-                    <aside className="switchLink" >buidl</aside>
-                    <img src="/assets/img/buidl-logo.png"></img>
+                    <span ref={ref => this.splittedReward = ref} className="switchFinal">{window.formatMoney(0)}</span>
+                    <aside className="switchLink">{window.token.symbol}</aside>
+                    <img src={window.token.logo}/>
                 </section>
                 <section className="switchActions">
-                    {window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="buidl" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve buidl"}</a>}
-                    {window.walletAddress && !this.state.approveFirst && this.state.approveSecond && <a data-target="usdc" href="javascript:;" className="switchAction active" onClick={this.approve}>{this.state.loadingApprove && <Loader/>}{!this.state.loadingApprove && "Approve usdc"}</a>}
-                    {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>{this.state.loadingStake && <Loader/>}{!this.state.loadingStake && "Stake"}</a>}
+                    {window.walletAddress && (this.state.approveFirst || !this.state.approveSecond) && <a data-target="mine" href="javascript:;" className={"switchAction" + (this.state.approveFirst ? " active" : "")} onClick={this.approve}>Approve {this.props.element.symbol}</a>}
+                    {window.walletAddress && !this.state.approveFirst && this.state.approveSecond && <a data-target="other" href="javascript:;" className="switchAction active" onClick={this.approve}>Approve {this.state.approveSecond}</a>}
+                    {window.walletAddress && <a href="javascript:;" className={"switchAction" + (!this.state.approveFirst && !this.state.approveSecond ? " active" : "")} onClick={this.stake}>Stake</a>}
                     {!window.walletAddress && <a href="javascript:;" onClick={() => window.ethereum.enable().then(() => window.getAddress()).then(() => _this.emit('ethereum/ping'))} className="switchAction active">Connect</a>}
                 </section>
-                <p>By Staking buidl you'll earn from the Uniswap V2 Trading fees + the Staking Reward. Staking buidl you're adding liquidity to Uniswap V2 and you'll recevie Pool Tokens.</p>
-                <p>Disclamer: Staking buidl is an irreversible action, you'll be able to redeem your locked Uniswap V2 tokens only after the selected locking period. Do it at your own risk</p>
+                <p>By Staking {this.props.element.symbol} you'll earn from the Uniswap V2 Trading fees + the Staking Reward. Staking {this.props.element.symbol} you're adding liquidity to Uniswap V2 and you'll recevie Pool Tokens.</p>
+                <p>Disclamer: Staking {this.props.element.symbol} is an irreversible action, you'll be able to redeem your locked Uniswap V2 tokens only after the selected locking period. Do it at your own risk</p>
             </section>
         </section>);
     }

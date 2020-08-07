@@ -8,7 +8,7 @@ var Index = React.createClass({
     ],
     getInitialState() {
         return {
-            element: "Info"
+            view: "Info"
         };
     },
     getDefaultSubscriptions() {
@@ -21,28 +21,31 @@ var Index = React.createClass({
         e && e.preventDefault && e.preventDefault(true) && e.stopPropagation && e.stopPropagation(true);
         this.changeView(e.currentTarget.innerHTML);
     },
-    changeView(element) {
+    changeView(view) {
         var _this = this;
         this.domRoot.children().find('a').removeClass("selected").each((i, it) => {
-            if(it.innerHTML.toLowerCase() === element.toLowerCase()) {
+            if(it.innerHTML.toLowerCase() === view.toLowerCase()) {
                 return $(it).addClass('selected');
             }
         });
         ReactModuleLoader.load({
             modules : [
-                'spa/' + element.toLowerCase()
+                'spa/' + view.toLowerCase()
             ],
             callback: function() {
-                _this.setState({element});
+                _this.setState({view});
             }
         });
     },
     componentDidMount() {
-        this.controller.updateWalletInfo();
+        this.controller.loadStakingData();
     },
     render() {
         var props = {};
-        this.state && Object.entries(this.state).forEach(data => props[data[0]] = data[1]);
+        this.props && Object.entries(this.props).forEach(entry => props[entry[0]] = entry[1]);
+        this.state && Object.entries(this.state).forEach(entry => props[entry[0]] = entry[1]);
+        props.props && Object.entries(props.props).forEach(entry => props[entry[0]] = entry[1]);
+        delete props.props;
         return (
             <section className="OnePage">
                 {/*<section className="DisclamerBanner">
@@ -52,10 +55,10 @@ var Index = React.createClass({
                 </section>*/}
                 <header className="Head">
                     <section className="HBrand">
-                        <h6><img src="/assets/img/buidl-logo.png"></img> &#129412; Liquidity Stake</h6>
+                        <h6><img src={window.token.logo}></img> &#129412; Liquidity Stake</h6>
                     <section className="HActions">
-                        <a href="https://dfohub.com" target="_Blank">#dfohub</a>
-                        <a href="https://github.com/b-u-i-d-l/staking" target="_Blank">#github</a>
+                        <a href={window.dfo.ens} target="_Blank">#{window.dfo.name}</a>
+                        <a href={window.context.gitHubURL} target="_blank">#github</a>
                         <a href={window.getNetworkElement("etherscanURL") + "address/" + window.getNetworkElement("stakeAddress")} target="_blank">#etherscan</a>
                     </section>
                     {this.state && this.state.walletData && <section className="WalletInfoBoxAll">
@@ -65,8 +68,8 @@ var Index = React.createClass({
                                 <h2><a href={window.getNetworkElement('etherscanURL') + 'address/' + window.walletAddress} target="_blank">{window.shortenWord(window.walletAddress, 15)}</a></h2>
                             </section>
                             {Object.keys(this.state.walletData).map(key => <section key={key} className="WalletInfoBoxBalances">
-                                <img src={"assets/img/" + key + "-logo.png"}/>
-                                <p>{this.state.walletData[key]}</p>
+                                <img src={this.state.walletData[key].logo}/>
+                                <p>{this.state.walletData[key].balance}{'\u00a0'}{key}</p>
                             </section>)}
                         </section>
                     </section>}
@@ -79,7 +82,7 @@ var Index = React.createClass({
                         <a href="javascript:;" className="StakeOpener" onClick={this.onClick}>Status</a>
                     </ul>
                 </section>
-                    {React.createElement(window[this.state.element], props)}
+                    {React.createElement(window[this.state.view], props)}
             </section>
         );
     }

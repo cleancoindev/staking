@@ -5,10 +5,10 @@ var StatusController = function (view) {
     context.load = async function load() {
         var currentBlock = await window.web3.eth.getBlockNumber();
         var stakingPositions = [];
-        for(var tier = 0; tier < 4; tier++) {
-            var length = parseInt(await window.blockchainCall(window.stake.methods.length, tier));
+        for(var tier = 0; tier < context.view.props.stakingData.tiers.length; tier++) {
+            var length = parseInt(await window.blockchainCall(context.view.props.stakingData.stakingManager.methods.length, tier));
             for(var i = 0; i < length; i++) {
-                var rawStakingInfoData = await window.blockchainCall(window.stake.methods.stakeInfo, tier, i);
+                var rawStakingInfoData = await window.blockchainCall(context.view.props.stakingData.stakingManager.methods.stakeInfo, tier, i);
                 if(window.walletAddress.toLowerCase() !== rawStakingInfoData[0].toLowerCase()) {
                     continue;
                 }
@@ -26,7 +26,6 @@ var StatusController = function (view) {
                     splittedReward : rawStakingInfoData[8],
                     cumulativeReward : '0'
                 };
-                stakingInfo.poolAddress = await window.blockchainCall(window.uniswapV2Factory.methods.getPair, window.buidlToken.options.address, (parseInt(stakingInfo.poolPosition) === 0 ? window.wethToken : window.usdcToken).options.address);
                 stakingInfo.poolAmountFromDecimals = new UniswapFraction(stakingInfo.poolAmount, 1).divide(10 ** 18).toSignificant(6);
                 stakingInfo.canWithdraw = currentBlock >= parseInt(stakingInfo.endBlock);
                 for(var blockTime of stakingInfo.partialRewardBlockTimes) {
@@ -51,7 +50,7 @@ var StatusController = function (view) {
         if($(e.currentTarget).hasClass('NoRedeem')) {
             return;
         }
-        await window.blockchainCall(window.stake.methods.partialReward, tier, position);
+        await window.blockchainCall(window.stakingManager.methods.partialReward, tier, position);
         context.load();
     }
 
@@ -60,7 +59,7 @@ var StatusController = function (view) {
         if($(e.currentTarget).hasClass('NoRedeem')) {
             return;
         }
-        await window.blockchainCall(window.stake.methods.withdraw, tier, position);
+        await window.blockchainCall(window.stakingManager.methods.withdraw, tier, position);
         context.load();
     }
 };

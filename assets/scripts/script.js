@@ -7,6 +7,7 @@ window.pragmaSolidityRule = new RegExp("pragma( )+solidity( )*(\\^|>)\\d+.\\d+.\
 window.base64Regex = new RegExp("data:([\\S]+)\\/([\\S]+);base64", "gs");
 
 window.Main = async function Main() {
+    window.getPage();
     window.context = await window.AJAXRequest('data/context.json');
     if (!await window.blockchainSetup()) {
         return;
@@ -101,12 +102,16 @@ window.onEthereumUpdate = function onEthereumUpdate(millis) {
                 if (network === undefined || network === null) {
                     return alert('This network is actually not supported!');
                 }
-                window.stake = window.newContract(window.context.StakeAbi, window.getNetworkElement("stakeAddress"));
+                window.DFOHub(window.web3);
+                var stakeAddress = window.addressBarParams.a || window.getNetworkElement("stakeAddress");
+                window.stakingManager = window.newContract(window.context.StakeAbi, stakeAddress);
+                window.doubleProxy = window.newContract(window.context.DoubleProxyAbi, await window.blockchainCall(window.stakingManager.methods.doubleProxy))
+                window.dfo = window.web3.eth.dfoHub.load(await window.blockchainCall(window.doubleProxy.methods.proxy));
                 window.uniswapV2Factory = window.newContract(window.context.UniswapV2FactoryAbi, window.context.uniswapV2FactoryAddress);
                 window.uniswapV2Router = window.newContract(window.context.UniswapV2RouterAbi, window.context.uniswapV2RouterAddress);
-                window.buidlToken = window.newContract(window.context.IERC20Abi, window.getNetworkElement("buidlTokenAddress"));
-                window.usdcToken = window.newContract(window.context.IERC20Abi, window.getNetworkElement("usdcTokenAddress"));
-                window.wethToken = window.newContract(window.context.IERC20Abi, await window.blockchainCall(window.uniswapV2Router.methods.WETH));
+                window.wethToken = window.newContract(window.context.IERC20Abi, window.wethAddress = window.web3.utils.toChecksumAddress(await window.blockchainCall(window.uniswapV2Router.methods.WETH)));
+                window.dfo = await window.dfo;
+                window.token = await window.loadTokenInfos((await window.dfo.votingToken).options.address, window.wethToken.options.address);
                 update = true;
             }
             delete window.walletAddress;
@@ -1206,4 +1211,151 @@ window.formatMoney = function formatMoney(value, decPlaces, thouSeparator, decSe
         }
     }
     return split.join(decSeparator);
+};
+
+window.getPage = function getPage() {
+    if(window.addressBarParams) {
+        return  window.addressBarParams.location;
+    }
+    var location;
+    try {
+        var search = {};
+        var splits = window.location.search.split('?');
+        for(var z in splits) {
+            var split = splits[z].trim();
+            if(split.length === 0) {
+                continue;
+            }
+            split = split.split('&');
+            for(var i in split) {
+                var data = split[i].trim();
+                if(data.length === 0) {
+                    continue;
+                }
+                data = data.split('=');
+                data[1] = window.decodeURIComponent(data[1]);
+                if(!search[data[0]]) {
+                    search[data[0]] = data[1];
+                } else {
+                    var value = search[data[0]];
+                    if(typeof value !== 'object') {
+                        value = [value];
+                    }
+                    value.push(data[1]);
+                    search[data[0]] = value;
+                }
+            }
+        }
+        window.addressBarParams = search;
+        location = window.addressBarParams.location;
+    } catch(e) {
+    }
+    window.history.pushState({},"", window.location.protocol + '//' + window.location.host);
+    return location;
+};
+
+window.loadUniswapPairs = async function loadUniswapPairs(view, address) {
+    window.pairCreatedTopic = window.pairCreatedTopic || window.web3.utils.sha3('PairCreated(address,address,address,uint256)');
+    address = window.web3.utils.toChecksumAddress(address || view.props.tokenAddress);
+    view.address = address;
+    view.setState({ uniswapPairs: null, selected: null });
+    var wethAddress = window.web3.utils.toChecksumAddress(await window.blockchainCall(window.newContract(window.context.uniSwapV2RouterAbi, window.context.uniSwapV2RouterAddress).methods.WETH));
+    if (address !== view.address) {
+        return;
+    }
+    if (address === window.voidEthereumAddress) {
+        view.address = address = wethAddress;
+    }
+    var myToken = window.web3.eth.abi.encodeParameter('address', address);
+    var logs = await window.getLogs({
+        address: window.context.uniSwapV2FactoryAddress,
+        fromBlock: '0',
+        topics: [
+            window.pairCreatedTopic, [myToken]
+        ]
+    });
+    if (address !== view.address) {
+        return;
+    }
+    var uniswapPairs = [];
+    for (var log of logs) {
+        for (var topic of log.topics) {
+            if (topic === window.pairCreatedTopic || topic.toLowerCase() === myToken.toLowerCase()) {
+                continue;
+            }
+            var pairToken = window.newContract(window.context.uniSwapV2PairAbi, window.web3.eth.abi.decodeParameters(['address', 'uint256'], log.data)[0]);
+            var token0 = window.web3.utils.toChecksumAddress(await window.blockchainCall(pairToken.methods.token0));
+            if (address !== view.address) {
+                return;
+            }
+            var reserves = await window.blockchainCall(pairToken.methods.getReserves);
+            if (address !== view.address) {
+                return;
+            }
+            var addr = window.web3.utils.toChecksumAddress(window.web3.eth.abi.decodeParameter('address', topic));
+            var tokenInfo = await window.loadTokenInfos(addr, wethAddress);
+            if (address !== view.address) {
+                return;
+            }
+            tokenInfo.pairToken = pairToken;
+            tokenInfo.mainReserve = reserves[address === token0 ? 0 : 1];
+            tokenInfo.otherReserve = reserves[address === token0 ? 1 : 0];
+            uniswapPairs.push(tokenInfo);
+            view.enqueue(() => view.setState({ uniswapPairs }));
+        }
+    }
+};
+
+window.loadTokenInfos = async function loadTokenInfos(addresses, wethAddress) {
+    wethAddress = wethAddress || await window.blockchainCall(window.newContract(window.context.uniSwapV2RouterAbi, window.context.uniSwapV2RouterAddress).methods.WETH);
+    wethAddress = window.web3.utils.toChecksumAddress(wethAddress);
+    var single = (typeof addresses).toLowerCase() === 'string';
+    addresses = single ? [addresses] : addresses;
+    var tokens = [];
+    for (var address of addresses) {
+        address = window.web3.utils.toChecksumAddress(address);
+        var token = window.newContract(window.context.votingTokenAbi, address);
+        tokens.push({
+            address,
+            token,
+            name: address === wethAddress ? 'Ethereum' : await window.blockchainCall(token.methods.name),
+            symbol: address === wethAddress ? 'ETH' : await window.blockchainCall(token.methods.symbol),
+            decimals: address === wethAddress ? '18' : await window.blockchainCall(token.methods.decimals),
+            logo: await window.loadLogo(address === wethAddress ? window.voidEthereumAddress : address)
+        });
+    }
+    return single ? tokens[0] : tokens;
+};
+
+window.loadLogo = async function loadLogo(address) {
+    address = window.web3.utils.toChecksumAddress(address);
+    var logo = address === window.voidEthereumAddress ? 'assets/img/eth-logo.png' : window.context.trustwalletImgURLTemplate.format(address);
+    try {
+        await window.AJAXRequest(logo);
+    } catch (e) {
+        logo = 'assets/img/default-logo.png';
+    }
+    return logo;
+};
+
+window.calculateTimeTier = function calculateTimeTier(blockLimit) {
+    var tiers = Object.entries(window.context.blockTiers);
+    for (var tier of tiers) {
+        var steps = tier[1].averages;
+        if (blockLimit >= steps[0] && blockLimit <= steps[2]) {
+            return `~${tier[0].firstLetterToUpperCase()} (${blockLimit} blocks)`;
+        }
+    }
+    return `${blockLimit} blocks`;
+};
+
+window.getTierKey = function getTierKey(blockLimit) {
+    var tiers = Object.entries(window.context.blockTiers);
+    for (var tier of tiers) {
+        var steps = tier[1].averages;
+        if (blockLimit >= steps[0] && blockLimit <= steps[2]) {
+            return tier[0];
+        }
+    }
+    return 'Custom';
 };
