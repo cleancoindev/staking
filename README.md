@@ -1,4 +1,6 @@
-# buidl Liquidity Staking Mechanism V1
+# THIS IS AN OLD VERSION OF CONTRACTS | DEPRECATED
+
+## buidl Liquidity Staking Mechanism V1
 
 <img src="/assets/img/syb.gif">
 
@@ -71,6 +73,3 @@ buidl Staking works using Uniswap V2, built by the Uniswap team. Before you  sta
 
 <a href="https://medium.com/@pintail/understanding-uniswap-returns-cc593f3499ef" target="_Blank">Advanced Uniswap Guide</a>
 
-# GUI
-
-The Official Staking GUI will be available before Monday at https://stake.dfohub.com
